@@ -22,19 +22,35 @@ namespace RimDef
             // NOTE: The contents of a Def folder don't follow a clear naming convention,
             // but the folder names are generally the same in every mod.
             // see https://rimworldwiki.com/wiki/Modding_Tutorials/Mod_folder_structure
-            try
+            // FIXME: this breaks the for loop if there's an exception. silly dev.
+            if (File.Exists(mod.dir + @"/About/About.xml"))
             {
                 string path = mod.dir + "/" + mod.version;
-                string[] files = Directory.GetFiles(path, "*.xml", SearchOption.AllDirectories);
-                foreach (string file in files)
+                if (Directory.Exists(path))
                 {
-                    Console.WriteLine("reading " + file);
-                    defs.AddRange(ReadXML(mod, file));
+                    string[] files = Directory.GetFiles(path, "*.xml", SearchOption.AllDirectories);
+
+                    foreach (string file in files)
+                    {
+                        if (File.Exists(file))
+                        {
+                            Console.WriteLine("reading " + file);
+                            defs.AddRange(ReadXML(mod, file));
+                        }
+                        else
+                        {
+                            Console.WriteLine("skipping " + file);
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("invalid path: " + path);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex);
+                Console.WriteLine("skipping " + mod.name + ": " + mod.dir + @"/About/About.xml");
             }
 
             return defs;
@@ -130,7 +146,7 @@ namespace RimDef
                                 // core textures
                                 // https://ludeon.com/forums/index.php?topic=2325
 
-                                string texPath = mod.dir + @"/Textures/" + texNode.InnerText;
+                                string texPath = mod.dir + @"Textures/" + texNode.InnerText;
                                 if (Directory.Exists(texPath))
                                 {
                                     string[] files = Directory.GetFiles(
@@ -295,11 +311,13 @@ namespace RimDef
                     XmlNode defName = newNode.SelectSingleNode("defName");
                     if (defName != null)
                     {
-                        Def disabledDef = new Def();
-                        disabledDef.mod = mod;
-                        disabledDef.defType = newNode.Name;
-                        disabledDef.defName = defName.InnerText;
-                        disabledDef.label = "(Disabled) ";
+                        Def disabledDef = new Def
+                        {
+                            mod = mod,
+                            defType = newNode.Name,
+                            defName = defName.InnerText,
+                            label = "(Disabled) "
+                        };
                         XmlNode labelNode = newNode.SelectSingleNode("label");
                         if (labelNode != null)
                             disabledDef.label += labelNode.InnerText;

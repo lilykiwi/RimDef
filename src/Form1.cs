@@ -9,13 +9,13 @@ namespace RimDef
 {
     public partial class Form1 : Form
     {
-        XMLReader xmlReader = new XMLReader();
+        private readonly XMLReader xmlReader = new XMLReader();
+        private readonly ListView lwDetails = new ListView();
 
         List<Def> defs = new List<Def>();
         List<Def> defsView = new List<Def>();
 
-        private ListView lwDetails = new ListView();
-
+        // FIXME: nullable properties
         public Form1()
         {
             InitializeComponent();
@@ -29,45 +29,46 @@ namespace RimDef
             //
             // lwDetail
             //
-            this.lwDetails.GridLines = true;
-            this.lwDetails.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.lwDetails.HideSelection = false;
-            this.lwDetails.Location = new System.Drawing.Point(440, 440);
-            this.lwDetails.Name = "lwDetail";
-            //this.lwDetails.Size = new System.Drawing.Size(360, 60);
-            this.lwDetails.TabIndex = 4;
-            this.lwDetails.UseCompatibleStateImageBehavior = false;
-            this.lwDetails.View = System.Windows.Forms.View.Details;
-            this.lwDetails.Visible = false;
+            lwDetails.GridLines = true;
+            lwDetails.HeaderStyle = ColumnHeaderStyle.None;
+            lwDetails.HideSelection = false;
+            //lwDetails.Location = new Point(440, 440);
+            lwDetails.Name = "lwDetail";
+            lwDetails.TabIndex = 4;
+            lwDetails.UseCompatibleStateImageBehavior = false;
+            lwDetails.View = View.Details;
+            //lwDetails.Visible = false;
 
-            this.lwDetails.Columns.Add("key", 150);
-            this.lwDetails.Columns.Add("value", 150);
+            lwDetails.Columns.Add("key", 150);
+            lwDetails.Columns.Add("value", 150);
 
-            this.Controls.Add(this.lwDetails);
+            //Controls.Add(lwDetails);
         }
 
-        private void loadModList(string rimDir)
+        private void LoadModList(string rimDir)
         {
             defs.Clear();
             lbMods.Items.Clear();
             lbDefTypes.DataSource = null;
             lwDefs.Items.Clear();
             xmlView.Clear();
-            gbDesc.Visible = false;
-            gbRecipe.Visible = false;
-            pictureBox1.Visible = false;
+            //gbDesc.Visible = false;
+            //gbRecipe.Visible = false;
+            //pictureBox1.Visible = false;
 
             List<Mod> modVersions;
-            string[] versionNames = { "1.0", "1.1", "1.1-1.2", "1.2", "1.3" };
+            // TODO: add this to comboBox
+            string[] versionNames = { "1.0", "1.1", "1.2", "1.3", "1.4", "1.5" };
 
+            // FIXME: what the fuck.
             try
             {
                 List<string> activeMods = xmlReader.ReadModConfig();
 
+                // workshop* folder
+                // TODO: merge this into main search, use ../../workshop/content/294100
                 if (rimDir.Contains("294100")) // steam version
                 {
-                    //TODO core defs (since rw 1.1)
-
                     xmlReader.modDir = rimDir;
 
                     foreach (string dir in Directory.GetDirectories(rimDir))
@@ -83,29 +84,19 @@ namespace RimDef
                         }
                         string modName = xmlReader.ReadModName(dir + @"/About/About.xml");
 
-                        Mod mod = new Mod(modName);
-                        mod.defPath = dir + @"/Defs/";
+                        Mod mod = new Mod(modName, "_", "1.4", dir, dir + @"/Defs/");
                         lbMods.Items.Add(mod);
-
-                        /* TODO
-                        foreach (string ver in versionNames)
-                        {
-                            string defPath = dir + "/" + ver + @"/Defs/";
-                            if (Directory.Exists(defPath))
-                            {
-                                latest = new Tuple<string, string>(modName + "*" + ver, defPath);
-                                defdirsTmp.Add(latest.Item1, latest.Item2);
-                            }
-                        }
-                        */
                     }
                 }
                 else // non-steam version
                 {
-                    // Core defs directory (since rw 1.1)
-                    Mod core = new Mod("Core");
-                    core.dir = rimDir + @"/Data/Core/";
-                    core.defPath = rimDir + @"/Data/Core/Defs/";
+                    Mod core = new Mod(
+                        "Core",
+                        "_",
+                        "_",
+                        rimDir + @"/Data/Core/",
+                        rimDir + @"/Data/Core/Defs/"
+                    );
                     lbMods.Items.Add(core);
 
                     string modDir = rimDir + @"/Mods/";
@@ -128,10 +119,7 @@ namespace RimDef
                         string path = dir + @"/Defs/";
                         if (Directory.Exists(path))
                         {
-                            Mod mod = new Mod(modName);
-                            mod.packageId = packageId;
-                            mod.dir = dir;
-                            mod.defPath = path;
+                            Mod mod = new Mod(modName, "_", packageId, dir, path);
                             modVersions.Add(mod);
                             latest = mod;
                         }
@@ -141,27 +129,24 @@ namespace RimDef
                             path = dir + "/" + ver + @"/Defs/";
                             if (Directory.Exists(path))
                             {
-                                Mod mod = new Mod(modName + "*" + ver);
-                                mod.packageId = packageId;
-                                mod.version = ver;
-                                mod.dir = dir;
-                                mod.defPath = path;
+                                Mod mod = new Mod(modName, ver, packageId, dir, path);
                                 modVersions.Add(mod);
                                 latest = mod;
                             }
                         }
 
-                        if (cbLatestVersion.Checked && latest != null)
+                        // TODO: implement comboBox for versions
+                        //if (cbLatestVersion.Checked && latest != null)
+                        //{
+                        //    lbMods.Items.Add(latest);
+                        //}
+                        //else
+                        //{
+                        foreach (Mod m in modVersions)
                         {
-                            lbMods.Items.Add(latest);
+                            lbMods.Items.Add(m);
                         }
-                        else
-                        {
-                            foreach (Mod m in modVersions)
-                            {
-                                lbMods.Items.Add(m);
-                            }
-                        }
+                        //}
                     }
                 }
             }
@@ -171,7 +156,8 @@ namespace RimDef
             }
         }
 
-        private void lbMods_SelectedIndexChanged(object sender, EventArgs e)
+        // TODO: optimise
+        private void LbMods_SelectedIndexChanged(object sender, EventArgs e)
         {
             // reading all defs from selected mod
             Mod mod = (Mod)lbMods.SelectedItem;
@@ -182,9 +168,9 @@ namespace RimDef
             lwDefs.Columns.Clear();
             lbDefTypes.DataSource = null;
             xmlView.Clear();
-            gbDesc.Visible = false;
-            gbRecipe.Visible = false;
-            pictureBox1.Visible = false;
+            //gbDesc.Visible = false;
+            //gbRecipe.Visible = false;
+            //pictureBox1.Visible = false;
             lwDetails.Items.Clear();
             lwRecipe.Items.Clear();
 
@@ -192,12 +178,12 @@ namespace RimDef
             lwDefs.Columns.Add("Name", 120);
             lwDefs.Columns.Add("Label", 150);
 
-            //xmlReader.defTypes.Sort();
+            xmlReader.defTypes.Sort();
             lbDefTypes.DataSource = xmlReader.defTypes;
         }
 
         // Filter defs from loaded mod ListBox
-        private void lbDefTypes_SelectedIndexChanged(object sender, EventArgs e)
+        private void LbDefTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lbDefTypes.SelectedIndices.Count > 0)
             {
@@ -218,19 +204,20 @@ namespace RimDef
             }
         }
 
-        private void lwDefs_SelectedIndexChanged(object sender, EventArgs e)
+        // FIXME: what the fuck
+        private void LwDefs_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lwDefs.SelectedIndices.Count > 0)
             {
                 Def def = defsView[lwDefs.SelectedIndices[0]];
 
-                gbRecipe.Visible = false;
-                gbDesc.Visible = false;
-                pictureBox1.Visible = false;
-                lwDetails.Visible = false;
+                //gbRecipe.Visible = false;
+                //gbDesc.Visible = false;
+                //pictureBox1.Visible = false;
+                //lwDetails.Visible = false;
                 //cbDisable.Visible = false;
 
-                lblPath.Text = def.file.Substring(def.file.IndexOf("/1."));
+                lblPath.Text = def.file; //.Substring(def.file.IndexOf("/1."));
                 xmlView.Text = def.xml;
 
                 if (def.defType.ToLower() == "recipedef")
@@ -255,9 +242,9 @@ namespace RimDef
                         new ListViewItem(new string[] { "Research prerequisite", recipe.research })
                     );
 
-                    lwDetails.Size = new System.Drawing.Size(360, 60);
-                    lwDetails.Visible = true;
-                    gbRecipe.Visible = true;
+                    //lwDetails.Size = new System.Drawing.Size(360, 60);
+                    //lwDetails.Visible = true;
+                    //gbRecipe.Visible = true;
                 }
 
                 if (def.defType.ToLower() == "thingdef")
@@ -270,13 +257,14 @@ namespace RimDef
                     }
                     if (lwDetails.Items.Count > 0)
                     {
-                        lwDetails.Size = new System.Drawing.Size(360, 110);
-                        lwDetails.Visible = true;
+                        //lwDetails.Size = new System.Drawing.Size(360, 110);
+                        //lwDetails.Visible = true;
                     }
 
+                    // FIXME: SRP me please
                     // Texture
                     Console.WriteLine("texture path = " + def.texture);
-                    Bitmap image = new Bitmap(RimDef.Properties.Resources.nopic);
+                    Bitmap image = new Bitmap(Properties.Resources.nopic);
                     if (File.Exists(def.texture))
                     {
                         try
@@ -289,7 +277,7 @@ namespace RimDef
                         }
                     }
                     pictureBox1.Image = (Image)image;
-                    pictureBox1.Visible = true;
+                    //pictureBox1.Visible = true;
                     pictureBox1.Refresh();
 
                     //cbDisable.Visible = true;
@@ -300,12 +288,13 @@ namespace RimDef
                 if (def.description != "")
                 {
                     thingDesc.Text = def.description;
-                    gbDesc.Visible = true;
+                    //gbDesc.Visible = true;
                 }
             }
         }
 
-        private void btnFolder_Click(object sender, EventArgs e)
+        // TODO: swap to OpenFileDialog or something
+        private void BtnFolder_Click(object sender, EventArgs e)
         {
             DialogResult result = folderBrowserDialog1.ShowDialog();
             if (result == DialogResult.OK)
@@ -314,22 +303,24 @@ namespace RimDef
             }
         }
 
-        private void btnLoad_Click(object sender, EventArgs e)
+        private void BtnLoad_Click(object sender, EventArgs e)
         {
-            loadModList(txtModDir.Text);
+            LoadModList(txtModDir.Text);
         }
 
         private SearchCore SearchCore { get; set; }
 
-        private void txtSearch_KeyDown(object sender, KeyEventArgs e)
+        // TODO: see about making this auto search
+        private void TxtSearch_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                btnSearch_Click(sender, e);
+                BtnSearch_Click(sender, e);
             }
         }
 
-        private void btnSearch_Click(object sender, EventArgs e)
+        // FIXME: ignores Def type filter set in lbDefTypes
+        private void BtnSearch_Click(object sender, EventArgs e)
         {
             var searchers = new List<Searcher> { new DefSearcher(defs) };
             SearchCore = new SearchCore(searchers);
@@ -362,19 +353,5 @@ namespace RimDef
                 defsView.Add(def);
             }
         }
-
-        //private void cbDisable_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    Def def = defsView[lwDefs.SelectedIndices[0]];
-        //    if (cbDisable.Checked)
-        //    {
-        //        Console.WriteLine(def.file);
-        //        xmlReader.disableNode(def);
-        //    }
-        //    else
-        //        xmlReader.enableNode(def);
-        //}
-
-        private void Form1_Load(object sender, EventArgs e) { }
     }
 }

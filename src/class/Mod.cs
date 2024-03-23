@@ -8,13 +8,7 @@
         public string dir;
         public string defPath;
 
-        public Mod(
-            string name,
-            string packageId = "_",
-            string version = "_",
-            string dir = "_",
-            string defPath = "_"
-        )
+        public Mod(string name, string packageId, string version, string dir, string defPath)
         {
             this.name = name;
             this.packageId = packageId;
