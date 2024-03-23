@@ -193,7 +193,9 @@ namespace RimDef
                 defsView = new List<Def>();
                 foreach (Def def in defs)
                 {
-                    if (def.defType == selectedType)
+                    Console.WriteLine(def.defType + "def" + " " + selectedType.ToLower());
+                    Console.WriteLine(def.defType + "def" == selectedType.ToLower());
+                    if (def.defType + "def" == selectedType.ToLower())
                     {
                         defsView.Add(def);
                         string[] items = { def.defType, def.defName, def.label };

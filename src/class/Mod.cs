@@ -2,6 +2,7 @@
 {
     public class Mod
     {
+        // TODO: overhaul path tracking here. move some stuff from XMLReader here too.
         public string name;
         public string packageId;
         public string version;

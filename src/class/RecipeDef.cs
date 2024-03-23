@@ -6,13 +6,33 @@ namespace RimDef
     {
         public List<string[]> ingredients = new List<string[]>();
 
-        public void addIngredients(string[] row)
+        public void AddIngredients(string[] row)
         {
-            this.ingredients.Add(row);
+            ingredients.Add(row);
         }
 
         public string research;
         public string skill;
         public string work;
+
+        public RecipeDef(
+            string research,
+            string skill,
+            string work,
+            Mod mod,
+            string defType,
+            string defName,
+            string label,
+            string description,
+            string texture,
+            string xml,
+            string file
+        )
+            : base(mod, defType, defName, label, description, texture, xml, file)
+        {
+            this.research = research;
+            this.skill = skill;
+            this.work = work;
+        }
     }
 }
