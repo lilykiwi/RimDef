@@ -50,7 +50,7 @@
             this.gbRecipe = new System.Windows.Forms.GroupBox();
             this.cbOnlyActiveMods = new System.Windows.Forms.CheckBox();
             this.cbLatestVersion = new System.Windows.Forms.CheckBox();
-            this.cbDisable = new System.Windows.Forms.CheckBox();
+            //this.cbDisable = new System.Windows.Forms.CheckBox();
             this.lblPath = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbDesc.SuspendLayout();
@@ -265,15 +265,15 @@
             // 
             // cbDisable
             // 
-            this.cbDisable.AutoSize = true;
-            this.cbDisable.Location = new System.Drawing.Point(440, 570);
-            this.cbDisable.Name = "cbDisable";
-            this.cbDisable.Size = new System.Drawing.Size(67, 17);
-            this.cbDisable.TabIndex = 23;
-            this.cbDisable.Text = "Disabled";
-            this.cbDisable.UseVisualStyleBackColor = true;
-            this.cbDisable.Visible = false;
-            this.cbDisable.CheckedChanged += new System.EventHandler(this.cbDisable_CheckedChanged);
+            //this.cbDisable.AutoSize = true;
+            //this.cbDisable.Location = new System.Drawing.Point(440, 570);
+            //this.cbDisable.Name = "cbDisable";
+            //this.cbDisable.Size = new System.Drawing.Size(67, 17);
+            //this.cbDisable.TabIndex = 23;
+            //this.cbDisable.Text = "Disabled";
+            //this.cbDisable.UseVisualStyleBackColor = true;
+            //this.cbDisable.Visible = false;
+            //this.cbDisable.CheckedChanged += new System.EventHandler(this.cbDisable_CheckedChanged);
             // 
             // lblPath
             // 

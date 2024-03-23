@@ -7,11 +7,11 @@ namespace RimDef
 {
     class XMLReader
     {
-        public string modDir;
+        public string? modDir;
 
-        public List<string> defTypes;
+        public List<string>? defTypes;
 
-        public List<Def> loadAllDefs(Mod mod)
+        public List<Def> LoadAllDefs(Mod mod)
         {
             Console.WriteLine("loading mod: " + mod.name);
 
@@ -19,7 +19,7 @@ namespace RimDef
 
             List<Def> defs = new List<Def>();
 
-            // NOTE: The contents of a Def folder don't follow a clear naming convention, 
+            // NOTE: The contents of a Def folder don't follow a clear naming convention,
             // but the folder names are generally the same in every mod.
             // see https://rimworldwiki.com/wiki/Modding_Tutorials/Mod_folder_structure
             try
@@ -29,26 +29,33 @@ namespace RimDef
                 foreach (string file in files)
                 {
                     Console.WriteLine("reading " + file);
-                    defs.AddRange(readXML(mod, file));
+                    defs.AddRange(ReadXML(mod, file));
                 }
             }
-            catch (Exception ex) { Console.WriteLine(ex); }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
 
             return defs;
         }
 
-        public List<string> readModConfig()
+        public List<string> ReadModConfig()
         {
             List<string> activeMods = new List<string>();
-            string path = Environment.ExpandEnvironmentVariables("%USERPROFILE%/Appdata/LocalLow/Ludeon Studios/RimWorld by Ludeon Studios/Config/ModsConfig.xml");
+            string path = Environment.ExpandEnvironmentVariables(
+                "%USERPROFILE%/Appdata/LocalLow/Ludeon Studios/RimWorld by Ludeon Studios/Config/ModsConfig.xml"
+            );
             var doc = new XmlDocument();
             doc.Load(path);
-            foreach (XmlNode node in doc.DocumentElement.SelectNodes("/ModsConfigData/activeMods/li"))
+            foreach (
+                XmlNode node in doc.DocumentElement.SelectNodes("/ModsConfigData/activeMods/li")
+            )
                 activeMods.Add(node.InnerText);
             return activeMods;
         }
 
-        public string readPackageId(string file)
+        public string ReadPackageId(string file)
         {
             string packageId = "-undefined-";
             var doc = new XmlDocument();
@@ -59,7 +66,7 @@ namespace RimDef
             return packageId;
         }
 
-        public string readModName(string file)
+        public string ReadModName(string file)
         {
             string modName = "-undefined-";
             var doc = new XmlDocument();
@@ -70,7 +77,7 @@ namespace RimDef
             return modName;
         }
 
-        private List<Def> readXML(Mod mod, string file)
+        private List<Def> ReadXML(Mod mod, string file)
         {
             List<Def> xmlDefs = new List<Def>();
             string[] orientations = { "_north", "_south", "_west", "_east" };
@@ -87,7 +94,7 @@ namespace RimDef
                         int idx = type.IndexOf("Def");
                         if (idx > 0)
                         {
-                            if (!defTypes.Contains(type))
+                            if (!defTypes!.Contains(type))
                             {
                                 defTypes.Add(type);
                             }
@@ -126,7 +133,11 @@ namespace RimDef
                                 string texPath = mod.dir + @"/Textures/" + texNode.InnerText;
                                 if (Directory.Exists(texPath))
                                 {
-                                    string[] files = Directory.GetFiles(texPath, "*.*", SearchOption.AllDirectories);
+                                    string[] files = Directory.GetFiles(
+                                        texPath,
+                                        "*.*",
+                                        SearchOption.AllDirectories
+                                    );
                                     texture = files[0];
                                 }
                                 else
@@ -137,7 +148,12 @@ namespace RimDef
                                         //Console.WriteLine(texture + " does not exist");
                                         foreach (string ori in orientations)
                                         {
-                                            string textureOri = mod.dir + @"/Textures/" + texNode.InnerText + ori + ".png";
+                                            string textureOri =
+                                                mod.dir
+                                                + @"/Textures/"
+                                                + texNode.InnerText
+                                                + ori
+                                                + ".png";
                                             if (File.Exists(textureOri))
                                             {
                                                 texture = textureOri;
@@ -161,7 +177,9 @@ namespace RimDef
                                 {
                                     foreach (XmlNode stat in statsNode.ChildNodes)
                                     {
-                                        thing.details.Add(new string[] { stat.Name, stat.InnerText });
+                                        thing.details.Add(
+                                            new string[] { stat.Name, stat.InnerText }
+                                        );
                                     }
                                 }
                                 def = thing;
@@ -184,7 +202,9 @@ namespace RimDef
 
                                 // <researchPrerequisite>
                                 string research = "-";
-                                XmlNode researchNode = child.SelectSingleNode("researchPrerequisite");
+                                XmlNode researchNode = child.SelectSingleNode(
+                                    "researchPrerequisite"
+                                );
                                 if (researchNode != null)
                                 {
                                     research = researchNode.InnerText;
@@ -225,7 +245,9 @@ namespace RimDef
 
                                     string amount = n.LastChild.InnerText;
 
-                                    recipe.addIngredients(new string[] { amount, ingredients, products });
+                                    recipe.addIngredients(
+                                        new string[] { amount, ingredients, products }
+                                    );
                                 }
                                 def = recipe;
                             }
@@ -240,7 +262,9 @@ namespace RimDef
                             def.disabled = false;
 
                             // XML view
-                            string xmlOut = System.Xml.Linq.XDocument.Parse(child.OuterXml).ToString();
+                            string xmlOut = System.Xml.Linq.XDocument
+                                .Parse(child.OuterXml)
+                                .ToString();
                             def.xml = xmlOut;
 
                             if (defName != "")
@@ -251,7 +275,10 @@ namespace RimDef
                     }
                 }
             }
-            catch (Exception ex) { Console.WriteLine(ex); }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
 
             try
             {
@@ -260,7 +287,8 @@ namespace RimDef
                 {
                     //Console.WriteLine("\ncomment: " + comment.InnerText + "\n");
                     string xml = comment.InnerText;
-                    if (!xml.StartsWith("<")) xml = "<" + xml + ">";
+                    if (!xml.StartsWith("<"))
+                        xml = "<" + xml + ">";
                     XmlReader nodeReader = XmlReader.Create(new StringReader(xml));
                     XmlNode newNode = doc.ReadNode(nodeReader);
 
@@ -273,7 +301,8 @@ namespace RimDef
                         disabledDef.defName = defName.InnerText;
                         disabledDef.label = "(Disabled) ";
                         XmlNode labelNode = newNode.SelectSingleNode("label");
-                        if (labelNode != null) disabledDef.label += labelNode.InnerText;
+                        if (labelNode != null)
+                            disabledDef.label += labelNode.InnerText;
                         disabledDef.file = file;
                         disabledDef.disabled = true;
                         xmlDefs.Add(disabledDef);
@@ -281,12 +310,15 @@ namespace RimDef
                     }
                 }
             }
-            catch (Exception) { Console.WriteLine("XMLReader: invalid comment."); }
+            catch (Exception)
+            {
+                Console.WriteLine("XMLReader: invalid comment.");
+            }
 
             return xmlDefs;
         }
 
-        public void disableNode(Def def)
+        public void DisableNode(Def def)
         {
             try
             {
@@ -295,14 +327,19 @@ namespace RimDef
                 if (!File.Exists(backup))
                     File.Copy(def.file, backup);
             }
-            catch (Exception ex) { Console.WriteLine(ex); }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
 
             try
             {
                 // comment out xml
                 var doc = new XmlDocument();
                 doc.Load(def.file);
-                XmlNode node = doc.DocumentElement.SelectSingleNode("ThingDef[defName='" + def.defName + "']");
+                XmlNode node = doc.DocumentElement.SelectSingleNode(
+                    "ThingDef[defName='" + def.defName + "']"
+                );
                 if (node != null)
                 {
                     XmlComment comment = doc.CreateComment(node.OuterXml);
@@ -317,17 +354,21 @@ namespace RimDef
                     Console.WriteLine("'" + def.defName + "' not found.");
                 }
             }
-            catch (Exception ex) { Console.WriteLine(ex); }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
-        public void enableNode(Def def)
+        public void EnableNode(Def def)
         {
             var doc = new XmlDocument();
             doc.Load(def.file);
             foreach (XmlNode comment in doc.SelectNodes("//comment()"))
             {
                 string xml = comment.InnerText;
-                if (!xml.StartsWith("<")) xml = "<" + xml + ">";
+                if (!xml.StartsWith("<"))
+                    xml = "<" + xml + ">";
                 XmlReader nodeReader = XmlReader.Create(new StringReader(xml));
                 XmlNode newNode = doc.ReadNode(nodeReader);
                 Console.WriteLine("enable: " + newNode.OuterXml);
@@ -344,6 +385,5 @@ namespace RimDef
                 }
             }
         }
-
     }
 }

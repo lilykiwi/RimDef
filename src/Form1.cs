@@ -26,9 +26,9 @@ namespace RimDef
             lwRecipe.Columns.Add("ingredient", 200);
             lwRecipe.Columns.Add("products", 100);
 
-            // 
+            //
             // lwDetail
-            // 
+            //
             this.lwDetails.GridLines = true;
             this.lwDetails.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.lwDetails.HideSelection = false;
@@ -62,7 +62,7 @@ namespace RimDef
 
             try
             {
-                List<string> activeMods = xmlReader.readModConfig();
+                List<string> activeMods = xmlReader.ReadModConfig();
 
                 if (rimDir.Contains("294100")) // steam version
                 {
@@ -77,10 +77,11 @@ namespace RimDef
 
                         if (cbOnlyActiveMods.Checked)
                         {
-                            string packageId = xmlReader.readPackageId(dir + @"/About/About.xml");
-                            if (!activeMods.Contains(packageId)) continue;
+                            string packageId = xmlReader.ReadPackageId(dir + @"/About/About.xml");
+                            if (!activeMods.Contains(packageId))
+                                continue;
                         }
-                        string modName = xmlReader.readModName(dir + @"/About/About.xml");
+                        string modName = xmlReader.ReadModName(dir + @"/About/About.xml");
 
                         Mod mod = new Mod(modName);
                         mod.defPath = dir + @"/Defs/";
@@ -115,13 +116,14 @@ namespace RimDef
                         modVersions = new List<Mod>();
                         Mod latest = null;
 
-                        string packageId = xmlReader.readPackageId(dir + @"/About/About.xml");
+                        string packageId = xmlReader.ReadPackageId(dir + @"/About/About.xml");
                         if (cbOnlyActiveMods.Checked)
                         {
-                            if (!activeMods.Contains(packageId)) continue;
+                            if (!activeMods.Contains(packageId))
+                                continue;
                         }
 
-                        string modName = xmlReader.readModName(dir + @"/About/About.xml");
+                        string modName = xmlReader.ReadModName(dir + @"/About/About.xml");
 
                         string path = dir + @"/Defs/";
                         if (Directory.Exists(path))
@@ -163,14 +165,17 @@ namespace RimDef
                     }
                 }
             }
-            catch (Exception ex) { Console.WriteLine("Error loading modlist: " + ex); }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error loading modlist: " + ex);
+            }
         }
 
         private void lbMods_SelectedIndexChanged(object sender, EventArgs e)
         {
             // reading all defs from selected mod
             Mod mod = (Mod)lbMods.SelectedItem;
-            defs = xmlReader.loadAllDefs(mod);
+            defs = xmlReader.LoadAllDefs(mod);
             defsView = defs;
 
             lwDefs.Items.Clear();
@@ -223,7 +228,7 @@ namespace RimDef
                 gbDesc.Visible = false;
                 pictureBox1.Visible = false;
                 lwDetails.Visible = false;
-                cbDisable.Visible = false;
+                //cbDisable.Visible = false;
 
                 lblPath.Text = def.file.Substring(def.file.IndexOf("/1."));
                 xmlView.Text = def.xml;
@@ -240,9 +245,15 @@ namespace RimDef
                     }
 
                     lwDetails.Items.Clear();
-                    lwDetails.Items.Add(new ListViewItem(new string[] { "Work amount", recipe.work }));
-                    lwDetails.Items.Add(new ListViewItem(new string[] { "Skill requirements", recipe.skill }));
-                    lwDetails.Items.Add(new ListViewItem(new string[] { "Research prerequisite", recipe.research }));
+                    lwDetails.Items.Add(
+                        new ListViewItem(new string[] { "Work amount", recipe.work })
+                    );
+                    lwDetails.Items.Add(
+                        new ListViewItem(new string[] { "Skill requirements", recipe.skill })
+                    );
+                    lwDetails.Items.Add(
+                        new ListViewItem(new string[] { "Research prerequisite", recipe.research })
+                    );
 
                     lwDetails.Size = new System.Drawing.Size(360, 60);
                     lwDetails.Visible = true;
@@ -272,14 +283,17 @@ namespace RimDef
                         {
                             image = new Bitmap(def.texture);
                         }
-                        catch (Exception ex) { Console.WriteLine(ex); }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                        }
                     }
                     pictureBox1.Image = (Image)image;
                     pictureBox1.Visible = true;
                     pictureBox1.Refresh();
 
-                    cbDisable.Visible = true;
-                    cbDisable.Checked = def.disabled;
+                    //cbDisable.Visible = true;
+                    //cbDisable.Checked = def.disabled;
                 }
 
                 // Description
@@ -349,20 +363,18 @@ namespace RimDef
             }
         }
 
-        private void cbDisable_CheckedChanged(object sender, EventArgs e)
-        {
-            Def def = defsView[lwDefs.SelectedIndices[0]];
-            if (cbDisable.Checked)
-            {
-                Console.WriteLine(def.file);
-                xmlReader.disableNode(def);
-            }
-            else
-                xmlReader.enableNode(def);
-        }
+        //private void cbDisable_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    Def def = defsView[lwDefs.SelectedIndices[0]];
+        //    if (cbDisable.Checked)
+        //    {
+        //        Console.WriteLine(def.file);
+        //        xmlReader.disableNode(def);
+        //    }
+        //    else
+        //        xmlReader.enableNode(def);
+        //}
 
-        private void Form1_Load(object sender, EventArgs e)
-        { }
-
+        private void Form1_Load(object sender, EventArgs e) { }
     }
 }

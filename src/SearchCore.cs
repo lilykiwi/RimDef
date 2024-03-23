@@ -26,7 +26,6 @@ namespace SimpleSearch
             }
             return result;
         }
-
     }
 
     public abstract class Searcher
@@ -36,8 +35,8 @@ namespace SimpleSearch
 
     public class SearchResponse
     {
-        public IEnumerable<SearchResult> Results { get; set; }
-        public string OriginalSearchTerm { get; set; }
+        public IEnumerable<SearchResult>? Results { get; set; }
+        public string? OriginalSearchTerm { get; set; }
         public TimeSpan TimeTaken { get; set; }
     }
 
@@ -46,6 +45,6 @@ namespace SimpleSearch
         //public string Label { get; set; }
         //public string Mod { get; set; }
         //public string Description { get; set; }
-        public Def Definition { get; set; }
+        public Def? Definition { get; set; }
     }
 }
