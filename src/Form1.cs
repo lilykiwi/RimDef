@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace RimDef
@@ -15,7 +16,7 @@ namespace RimDef
     List<Def> defs = new List<Def>();
     List<Def> defsView = new List<Def>();
 
-    readonly string[] versionNames = { "1.0", "1.1", "1.2", "1.3", "1.4", "1.5" };
+    public readonly static string[] versionNames = { "Version", "All", "1.0", "1.1", "1.2", "1.3", "1.4", "1.5" };
 
     // FIXME: nullable properties
     public Form1()
@@ -56,106 +57,41 @@ namespace RimDef
       lbDefTypes.DataSource = null;
       lwDefs.Items.Clear();
       xmlView.Clear();
-      //gbDesc.Visible = false;
+      //gbDesc.Text = "";
+      thingDesc.Text = "";
       //gbRecipe.Visible = false;
       //pictureBox1.Visible = false;
 
-      List<Mod> modVersions;
+      List<string> activeMods = xmlReader.ReadModConfig();
 
-      // FIXME: what the fuck.
-      try
-      {
-        List<string> activeMods = xmlReader.ReadModConfig();
+      foreach (Mod mod in xmlReader.GetMods(
+          Path.Combine(rimDir, "Data"),
+          versionComboBox.Text,
+          core: true
+      ))
+        lbMods.Items.Add(mod);
 
-        // workshop* folder
-        // TODO: merge this into main search, use ../../workshop/content/294100
-        if (rimDir.Contains("294100")) // steam version
+      // we want to get mods from workshop (if it exists) and from local mod dir
+      string workshopPath = Path.GetFullPath(Path.Combine(rimDir, "../../workshop/content/294100"));
+      string localModPaths = Path.Combine(rimDir, "Mods");
+
+      if (Directory.Exists(localModPaths))
+        foreach (Mod mod in xmlReader.GetMods(localModPaths, versionComboBox.Text))
         {
-          xmlReader.modDir = rimDir;
-
-          foreach (string dir in Directory.GetDirectories(rimDir))
-          {
-            //Dictionary<string, string> defdirsTmp = new Dictionary<string, string>();
-            //Tuple<string, string> latest = null;
-
-            if (cbOnlyActiveMods.Checked)
-            {
-              string packageId = xmlReader.ReadPackageId(dir + @"/About/About.xml");
-              if (!activeMods.Contains(packageId))
-                continue;
-            }
-            string modName = xmlReader.ReadModName(dir + @"/About/About.xml");
-
-            Mod mod = new Mod(modName, "_", "1.4", dir, dir + @"/Defs/");
-            lbMods.Items.Add(mod);
-          }
+          if (cbOnlyActiveMods.Checked && !activeMods.Contains(mod.packageId))
+            continue;
+          lbMods.Items.Add(mod);
         }
-        else // non-steam version
+
+      // could put this in the function but its working i wanna get the commit out
+      if (Directory.Exists(workshopPath))
+        foreach (Mod mod in xmlReader.GetMods(workshopPath, versionComboBox.Text))
         {
-          Mod core = new Mod(
-              "Core",
-              "_",
-              "_",
-              rimDir + @"/Data/Core/",
-              rimDir + @"/Data/Core/Defs/"
-          );
-          lbMods.Items.Add(core);
-
-          string modDir = rimDir + @"/Mods/";
-          xmlReader.modDir = modDir;
-
-          foreach (string dir in Directory.GetDirectories(modDir))
-          {
-            modVersions = new List<Mod>();
-            Mod? latest = null;
-
-            string packageId = xmlReader.ReadPackageId(dir + @"/About/About.xml");
-            if (cbOnlyActiveMods.Checked)
-            {
-              if (!activeMods.Contains(packageId))
-                continue;
-            }
-
-            string modName = xmlReader.ReadModName(dir + @"/About/About.xml");
-
-            string path = dir + @"/Defs/";
-            if (Directory.Exists(path))
-            {
-              Mod mod = new Mod(modName, "_", packageId, dir, path);
-              modVersions.Add(mod);
-              latest = mod;
-            }
-
-            foreach (string ver in versionNames)
-            {
-              path = dir + "/" + ver + @"/Defs/";
-              if (Directory.Exists(path))
-              {
-                Mod mod = new Mod(modName, ver, packageId, dir, path);
-                modVersions.Add(mod);
-                latest = mod;
-              }
-            }
-
-            // TODO: implement comboBox for versions
-            //if (cbLatestVersion.Checked && latest != null)
-            //{
-            //    lbMods.Items.Add(latest);
-            //}
-            //else
-            //{
-            foreach (Mod m in modVersions)
-            {
-              lbMods.Items.Add(m);
-            }
-            //}
-          }
+          Console.WriteLine(mod.packageId);
+          if (cbOnlyActiveMods.Checked && !activeMods.Contains(mod.packageId))
+            continue;
+          lbMods.Items.Add(mod);
         }
-      }
-      catch (Exception ex)
-      {
-        Console.WriteLine("Error loading modlist: " + ex);
-      }
     }
 
     // TODO: optimise
@@ -170,11 +106,13 @@ namespace RimDef
       lwDefs.Columns.Clear();
       lbDefTypes.DataSource = null;
       xmlView.Clear();
+      thingDesc.Text = "";
       //gbDesc.Visible = false;
       //gbRecipe.Visible = false;
       //pictureBox1.Visible = false;
       lwDetails.Items.Clear();
       lwRecipe.Items.Clear();
+      textBoxPath.Text = "";
 
       lwDefs.Columns.Add("Type", 100);
       lwDefs.Columns.Add("Name", 120);
@@ -195,8 +133,8 @@ namespace RimDef
         defsView = new List<Def>();
         foreach (Def def in defs)
         {
-          Console.WriteLine(def.defType + "def" + " " + selectedType.ToLower());
-          Console.WriteLine(def.defType + "def" == selectedType.ToLower());
+          //Console.WriteLine(def.defType + "def" + " " + selectedType.ToLower());
+          //Console.WriteLine(def.defType + "def" == selectedType.ToLower());
           if (def.defType + "def" == selectedType.ToLower())
           {
             defsView.Add(def);
@@ -206,6 +144,10 @@ namespace RimDef
           }
         }
       }
+      thingDesc.Text = "";
+      xmlView.Text = "";
+      lwDetails.Items.Clear();
+      lwRecipe.Items.Clear();
     }
 
     // FIXME: what the fuck
@@ -221,7 +163,8 @@ namespace RimDef
         //lwDetails.Visible = false;
         //cbDisable.Visible = false;
 
-        lblPath.Text = def.file; //.Substring(def.file.IndexOf("/1."));
+        //lblPath.Text = def.file;
+        textBoxPath.Text = def.file;
         xmlView.Text = def.xml;
 
         if (def.defType.ToLower() == "recipedef")
@@ -295,6 +238,14 @@ namespace RimDef
           //gbDesc.Visible = true;
         }
       }
+      else
+      {
+        // nothing is selected, that's okay, we can clear all the boxes that have bad info
+        thingDesc.Text = "";
+        xmlView.Text = "";
+        lwDetails.Items.Clear();
+        lwRecipe.Items.Clear();
+      }
     }
 
     // TODO: swap to OpenFileDialog or something
@@ -309,6 +260,10 @@ namespace RimDef
 
     private void BtnLoad_Click(object sender, EventArgs e)
     {
+      if (versionComboBox.Text == "Version")
+      {
+        versionComboBox.Text = xmlReader.GetCoreVersion(txtModDir.Text);
+      }
       LoadModList(txtModDir.Text);
     }
 

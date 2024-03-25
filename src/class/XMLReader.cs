@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Security.AccessControl;
 using System.Xml;
 
 namespace RimDef
 {
   class XMLReader
   {
-    public string modDir;
 
-    public List<string> defTypes;
+    // unused string
+    //public string? modDir;
+
+    public List<string>? defTypes;
 
     public List<Def> LoadAllDefs(Mod mod)
     {
@@ -19,19 +23,18 @@ namespace RimDef
 
       List<Def> defs = new List<Def>();
 
-      // NOTE: The contents of a Def folder don't follow a clear naming convention,
-      // but the folder names are generally the same in every mod.
-      // see https://rimworldwiki.com/wiki/Modding_Tutorials/Mod_folder_structure
-      // dir/Defs
-      // dir/Patches (implement patch defs)
-      // FIXME: This will fail if dir/1.4 doesn't exist. Need to implement a new check system for different distribution folders.
+      // FIXME: prevent duplicates from appearing.
+      // for example with rimmsqol: 
+      // - Defs\WorldObjectDefs\WorldObjects.xml
+      // - 1.4\Defs\WorldObjectDefs\WorldObjects.xml
+      // both exist and have duplicate entries
+      // currently both are shown but there's no version info or source file.
       Console.WriteLine(mod.dir + @"/About/About.xml");
       if (File.Exists(mod.dir + @"/About/About.xml"))
       {
-        string path = mod.dir + "/" + mod.version;
-        if (Directory.Exists(path))
+        if (Directory.Exists(mod.defPath))
         {
-          string[] files = Directory.GetFiles(path, "*.xml", SearchOption.AllDirectories);
+          string[] files = Directory.GetFiles(mod.defPath, "*.xml", SearchOption.AllDirectories);
 
           foreach (string file in files)
           {
@@ -48,7 +51,25 @@ namespace RimDef
         }
         else
         {
-          Console.WriteLine("invalid path: " + path);
+          Console.WriteLine("invalid path: " + mod.defPath);
+        }
+
+        if (Directory.Exists(mod.defPathVersion))
+        {
+          string[] files = Directory.GetFiles(mod.defPathVersion, "*.xml", SearchOption.AllDirectories);
+
+          foreach (string file in files)
+          {
+            if (File.Exists(file))
+            {
+              Console.WriteLine("reading " + file);
+              defs.AddRange(ReadXML(mod, file));
+            }
+            else
+            {
+              Console.WriteLine("skipping " + file);
+            }
+          }
         }
       }
       else
@@ -59,12 +80,146 @@ namespace RimDef
       return defs;
     }
 
+    public List<Mod> GetMods(string dir, string versionText, bool core = false)
+    {
+      List<Mod> Packs = new List<Mod>();
+
+      List<Mod> modVersions = new List<Mod>();
+
+      if (core)
+      {
+        Console.WriteLine("finding core mods at " + dir);
+        foreach (string mod in Directory.GetDirectories(dir))
+        {
+          string aboutFile = Path.Combine(mod, "About/About.xml");
+          Console.WriteLine(aboutFile);
+          if (File.Exists(aboutFile))
+          {
+            // core packages dont specify a name. instead we infer from the path
+            Packs.Add(new Mod(name: new DirectoryInfo(mod).Name,
+                              packageId: ReadPackageId(aboutFile),
+                              version: GetCoreVersion(mod, versionText),
+                              dir: mod,
+                              defPath: Path.Combine(mod, "Defs")));
+          }
+        }
+      }
+      else
+      {
+        Console.WriteLine("finding mods at " + dir);
+        foreach (string mod in Directory.GetDirectories(dir))
+        {
+          string aboutFile = Path.Combine(mod, "About/About.xml");
+          Console.WriteLine(aboutFile);
+          if (File.Exists(aboutFile))
+            modVersions.Add(new Mod(name: ReadModName(aboutFile),
+                                    packageId: ReadPackageId(aboutFile),
+                                    version: "_",
+                                    dir: mod,
+                                    defPath: Path.Combine(mod, "Defs")));
+
+        }
+
+        if (versionText == "All")
+        {
+          foreach (Mod mod in modVersions)
+          {
+            foreach (string ver in Form1.versionNames)
+            {
+              if (ver == "All")
+              {
+                string path = Path.Combine(mod.dir, "Defs");
+                if (Directory.Exists(path))
+                {
+                  Packs.Add(new Mod(name: mod.name + "(base)",
+                                    packageId: mod.packageId,
+                                    version: "_",
+                                    dir: mod.dir,
+                                    defPath: path));
+                }
+              }
+              else
+              {
+                string path = Path.Combine(mod.dir, ver);
+                // this is a rather naive assumption but should prevent any false positives (i.e. empty lists)
+                path = Path.Combine(path, "Defs");
+                if (Directory.Exists(path))
+                {
+                  Packs.Add(new Mod(name: mod.name + ver,
+                                    packageId: mod.packageId,
+                                    version: "_",
+                                    dir: mod.dir,
+                                    defPath: path));
+                }
+              }
+
+            }
+          }
+        }
+        else
+        {
+          foreach (Mod mod in modVersions)
+          {
+
+            string baseDefs = "";
+            string versionDefs = "_";
+
+            string baseDefsDir = Path.Combine(mod.dir, "Defs");
+            string versionDefsDir = Path.Combine(Path.Combine(mod.dir,
+                                                              versionText),
+                                                 "Defs");
+
+            if (Directory.Exists(baseDefsDir))
+              baseDefs = baseDefsDir;
+
+            if (Directory.Exists(versionDefsDir))
+              versionDefs = versionDefsDir;
+
+            Packs.Add(new Mod(name: mod.name,
+                  packageId: mod.packageId,
+                  version: versionText,
+                  dir: mod.dir,
+                  defPath: baseDefs,
+                  defPathVersion: versionDefs));
+          }
+        }
+      }
+
+      return Packs;
+    }
+
+    public string GetCoreVersion(string rimDir, string versionText = "_")
+    {
+      string gameVer = "Version";
+      string path = Path.Combine(rimDir, "Version.txt");
+      if (File.Exists(path))
+        using (StreamReader sr = new StreamReader(path))
+          gameVer = sr.ReadLine();
+
+      if (gameVer.Length > 3)
+        gameVer = gameVer.Substring(0, 3);
+      else
+        gameVer = "Version";
+
+      // if we can't get the version, should we assume from the comboBox?
+      if (versionText != "Version" && versionText != "All" && versionText != "_")
+        gameVer = versionText;
+
+      return gameVer;
+    }
+
     public List<string> ReadModConfig()
     {
       List<string> activeMods = new List<string>();
       string path = Environment.ExpandEnvironmentVariables(
           "%USERPROFILE%/Appdata/LocalLow/Ludeon Studios/RimWorld by Ludeon Studios/Config/ModsConfig.xml"
       );
+      if (!File.Exists(path))
+      {
+        Debug.Fail("file %USERPROFILE%/Appdata/LocalLow/Ludeon Studios/ ... /ModsConfig.xml does not exist?");
+        return activeMods;
+      }
+
       var doc = new XmlDocument();
       doc.Load(path);
       foreach (
@@ -76,8 +231,13 @@ namespace RimDef
 
     public string ReadPackageId(string file)
     {
-      string packageId = "-undefined-";
+      string packageId = "_";
       var doc = new XmlDocument();
+      if (!File.Exists(file))
+      {
+        Debug.Fail("file " + file + " does not exist?");
+        return packageId;
+      }
       doc.Load(file);
       XmlNode node = doc.DocumentElement.SelectSingleNode("/ModMetaData/packageId");
       if (node != null)
@@ -87,8 +247,13 @@ namespace RimDef
 
     public string ReadModName(string file)
     {
-      string modName = "-undefined-";
+      string modName = "_";
       var doc = new XmlDocument();
+      if (!File.Exists(file))
+      {
+        Debug.Fail("file " + file + " does not exist?");
+        return modName;
+      }
       doc.Load(file);
       XmlNode node = doc.DocumentElement.SelectSingleNode("/ModMetaData/name");
       if (node != null)
@@ -101,6 +266,7 @@ namespace RimDef
       List<Def> xmlDefs = new List<Def>();
 
       var doc = new XmlDocument();
+      Console.WriteLine(file);
       doc.Load(file);
       foreach (XmlNode node in doc.DocumentElement.SelectNodes("/Defs"))
       {
@@ -227,7 +393,7 @@ namespace RimDef
     {
       if (defType == "thing")
       {
-        Console.WriteLine("found thingDef: " + defName);
+        //Console.WriteLine("found thingDef: " + defName);
         ThingDef thing = new ThingDef(
             mod: mod,
             defType: defType,
@@ -253,7 +419,7 @@ namespace RimDef
 
       if (defType == "recipe")
       {
-        Console.WriteLine("found recipeDef: " + defName);
+        //Console.WriteLine("found recipeDef: " + defName);
         // <products>
         string products = "?";
         XmlNodeList productNodes = child.SelectNodes("products");
@@ -324,7 +490,7 @@ namespace RimDef
         return recipe;
       }
 
-      Console.WriteLine("returning Def: " + defName);
+      //Console.WriteLine("returning Def: " + defName);
       return new Def(
           mod: mod,
           defType: defType,
