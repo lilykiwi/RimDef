@@ -224,7 +224,16 @@ namespace RimDef
       }
 
       var doc = new XmlDocument();
-      doc.Load(path);
+
+      try
+      {
+        doc.Load(path);
+      }
+      catch (Exception e)
+      {
+        Debug.Fail("invalid mod config for " + path + "  -  " + e);
+      }
+
       foreach (
           XmlNode node in doc.DocumentElement.SelectNodes("/ModsConfigData/activeMods/li")
       )
@@ -241,7 +250,16 @@ namespace RimDef
         Debug.Fail("file " + file + " does not exist?");
         return packageId;
       }
-      doc.Load(file);
+
+      try
+      {
+        doc.Load(file);
+      }
+      catch (Exception e)
+      {
+        Debug.Fail("invalid package id for " + file + "  -  " + e);
+      }
+
       XmlNode node = doc.DocumentElement.SelectSingleNode("/ModMetaData/packageId");
       if (node != null)
         packageId = node.InnerText.ToLower();
@@ -257,7 +275,16 @@ namespace RimDef
         Debug.Fail("file " + file + " does not exist?");
         return modName;
       }
-      doc.Load(file);
+
+      try
+      {
+        doc.Load(file);
+      }
+      catch (Exception e)
+      {
+        Debug.Fail("invalid mod name for " + file + "  -  " + e);
+      }
+
       XmlNode node = doc.DocumentElement.SelectSingleNode("/ModMetaData/name");
       if (node != null)
         modName = node.InnerText.ToLower();
@@ -270,7 +297,16 @@ namespace RimDef
 
       var doc = new XmlDocument();
       //Console.WriteLine(file);
-      doc.Load(file);
+
+      try
+      {
+        doc.Load(file);
+      }
+      catch (Exception e)
+      {
+        Debug.Fail("invalid xml for " + file + "  -  " + e);
+      }
+
       foreach (XmlNode node in doc.DocumentElement.SelectNodes("/Defs"))
       {
         foreach (XmlNode child in node.ChildNodes)
