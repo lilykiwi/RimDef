@@ -13,23 +13,26 @@ namespace RimDef
     // unused string
     //public string? modDir;
 
-    public List<string>? defTypes;
+    public List<string> defTypes;
+
+    public XMLReader()
+    {
+      defTypes = new List<string>();
+    }
 
     public List<Def> LoadAllDefs(Mod mod)
     {
-      Console.WriteLine("loading mod: " + mod.name);
-
-      defTypes = new List<string>();
+      //Console.WriteLine("loading mod: " + mod.name);
 
       List<Def> defs = new List<Def>();
 
-      // FIXME: prevent duplicates from appearing.
+      // TODO: prevent duplicates from appearing.
       // for example with rimmsqol: 
       // - Defs\WorldObjectDefs\WorldObjects.xml
       // - 1.4\Defs\WorldObjectDefs\WorldObjects.xml
       // both exist and have duplicate entries
-      // currently both are shown but there's no version info or source file.
-      Console.WriteLine(mod.dir + @"/About/About.xml");
+      // currently both are shown and top-right path dictates which is which
+      //Console.WriteLine(mod.dir + @"/About/About.xml");
       if (File.Exists(mod.dir + @"/About/About.xml"))
       {
         if (Directory.Exists(mod.defPath))
@@ -40,19 +43,19 @@ namespace RimDef
           {
             if (File.Exists(file))
             {
-              Console.WriteLine("reading " + file);
+              //Console.WriteLine("reading " + file);
               defs.AddRange(ReadXML(mod, file));
             }
-            else
-            {
-              Console.WriteLine("skipping " + file);
-            }
+            //else
+            //{
+            //  Console.WriteLine("skipping " + file);
+            //}
           }
         }
-        else
-        {
-          Console.WriteLine("invalid path: " + mod.defPath);
-        }
+        //else
+        //{
+        //  Console.WriteLine("invalid path: " + mod.defPath);
+        //}
 
         if (Directory.Exists(mod.defPathVersion))
         {
@@ -62,20 +65,20 @@ namespace RimDef
           {
             if (File.Exists(file))
             {
-              Console.WriteLine("reading " + file);
+              //Console.WriteLine("reading " + file);
               defs.AddRange(ReadXML(mod, file));
             }
-            else
-            {
-              Console.WriteLine("skipping " + file);
-            }
+            //else
+            //{
+            //  Console.WriteLine("skipping " + file);
+            //}
           }
         }
       }
-      else
-      {
-        Console.WriteLine("skipping " + mod.name + ": " + mod.dir + @"/About/About.xml");
-      }
+      //else
+      //{
+      //  Console.WriteLine("skipping " + mod.name + ": " + mod.dir + @"/About/About.xml");
+      //}
 
       return defs;
     }
@@ -88,7 +91,7 @@ namespace RimDef
 
       if (core)
       {
-        Console.WriteLine("finding core mods at " + dir);
+        //Console.WriteLine("finding core mods at " + dir);
         foreach (string mod in Directory.GetDirectories(dir))
         {
           string aboutFile = Path.Combine(mod, "About/About.xml");
@@ -106,11 +109,11 @@ namespace RimDef
       }
       else
       {
-        Console.WriteLine("finding mods at " + dir);
+        //Console.WriteLine("finding mods at " + dir);
         foreach (string mod in Directory.GetDirectories(dir))
         {
           string aboutFile = Path.Combine(mod, "About/About.xml");
-          Console.WriteLine(aboutFile);
+          //Console.WriteLine(aboutFile);
           if (File.Exists(aboutFile))
             modVersions.Add(new Mod(name: ReadModName(aboutFile),
                                     packageId: ReadPackageId(aboutFile),
@@ -266,7 +269,7 @@ namespace RimDef
       List<Def> xmlDefs = new List<Def>();
 
       var doc = new XmlDocument();
-      Console.WriteLine(file);
+      //Console.WriteLine(file);
       doc.Load(file);
       foreach (XmlNode node in doc.DocumentElement.SelectNodes("/Defs"))
       {
@@ -307,7 +310,7 @@ namespace RimDef
 
             // Texture
             XmlNode texNode = child.SelectSingleNode("graphicData/texPath");
-            GetTexture(texNode, mod.dir);
+            texture = GetTexture(texNode, mod.dir);
 
             // XML view
             string xmlOut = System.Xml.Linq.XDocument.Parse(child.OuterXml).ToString();

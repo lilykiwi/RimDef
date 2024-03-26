@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace RimDef
@@ -18,12 +17,20 @@ namespace RimDef
 
     public readonly static string[] versionNames = { "Version", "All", "1.0", "1.1", "1.2", "1.3", "1.4", "1.5" };
 
-    // FIXME: nullable properties
+    private SearchCore? SearchCore;
+
     public Form1()
     {
       InitializeComponent();
 
       txtModDir.Text = @"C:\Games\RimWorld";
+
+      string appdataDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+      if (File.Exists(Path.Combine(appdataDir, "RimDef", "config.txt")))
+      {
+        txtModDir.Text = File.ReadAllText(Path.Combine(appdataDir, "RimDef", "config.txt"));
+        LoadDir();
+      }
 
       lwRecipe.Columns.Add("amount", 50);
       lwRecipe.Columns.Add("ingredient", 200);
@@ -87,7 +94,7 @@ namespace RimDef
       if (Directory.Exists(workshopPath))
         foreach (Mod mod in xmlReader.GetMods(workshopPath, versionComboBox.Text))
         {
-          Console.WriteLine(mod.packageId);
+          //Console.WriteLine(mod.packageId);
           if (cbOnlyActiveMods.Checked && !activeMods.Contains(mod.packageId))
             continue;
           lbMods.Items.Add(mod);
@@ -99,6 +106,7 @@ namespace RimDef
     {
       // reading all defs from selected mod
       Mod mod = (Mod)lbMods.SelectedItem;
+      xmlReader.defTypes.Clear();
       defs = xmlReader.LoadAllDefs(mod);
       defsView = defs;
 
@@ -194,42 +202,36 @@ namespace RimDef
           //gbRecipe.Visible = true;
         }
 
-        if (def.defType.ToLower() == "thingdef")
+
+        // Details
+        lwDetails.Items.Clear();
+        foreach (string[] row in def.details)
         {
-          // Details
-          lwDetails.Items.Clear();
-          foreach (string[] row in def.details)
-          {
-            lwDetails.Items.Add(new ListViewItem(row));
-          }
-          if (lwDetails.Items.Count > 0)
-          {
-            //lwDetails.Size = new System.Drawing.Size(360, 110);
-            //lwDetails.Visible = true;
-          }
-
-          // FIXME: SRP me please
-          // Texture
-          Console.WriteLine("texture path = " + def.texture);
-          Bitmap image = new Bitmap(Properties.Resources.nopic);
-          if (File.Exists(def.texture))
-          {
-            try
-            {
-              image = new Bitmap(def.texture);
-            }
-            catch (Exception ex)
-            {
-              Console.WriteLine(ex);
-            }
-          }
-          pictureBox1.Image = (Image)image;
-          //pictureBox1.Visible = true;
-          pictureBox1.Refresh();
-
-          //cbDisable.Visible = true;
-          //cbDisable.Checked = def.disabled;
+          lwDetails.Items.Add(new ListViewItem(row));
         }
+        if (lwDetails.Items.Count > 0)
+        {
+          //lwDetails.Size = new System.Drawing.Size(360, 110);
+          //lwDetails.Visible = true;
+        }
+
+        // TODO: SRP me please
+        // Texture
+        Console.WriteLine("texture path = " + def.texture);
+        Bitmap image = new Bitmap(Properties.Resources.nopic);
+        if (File.Exists(def.texture))
+        {
+          try
+          {
+            image = new Bitmap(def.texture);
+          }
+          catch (Exception ex)
+          {
+            Console.WriteLine(ex);
+          }
+        }
+        pictureBox1.Image = image;
+        pictureBox1.Refresh();
 
         // Description
         if (def.description != "")
@@ -255,19 +257,31 @@ namespace RimDef
       if (result == DialogResult.OK)
       {
         txtModDir.Text = folderBrowserDialog1.SelectedPath;
+        LoadDir();
       }
     }
 
     private void BtnLoad_Click(object sender, EventArgs e)
     {
-      if (versionComboBox.Text == "Version")
+      LoadDir();
+    }
+
+    private void LoadDir()
+    {
+      if (versionComboBox.Text != "All")
       {
         versionComboBox.Text = xmlReader.GetCoreVersion(txtModDir.Text);
       }
       LoadModList(txtModDir.Text);
+
+      string appdataDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+      if (!Directory.Exists(Path.Combine(appdataDir, "RimDef")))
+        Directory.CreateDirectory(Path.Combine(appdataDir, "RimDef"));
+
+      File.WriteAllText(Path.Combine(appdataDir, "RimDef", "config.txt"), txtModDir.Text);
+
     }
 
-    private SearchCore SearchCore { get; set; }
 
     // TODO: see about making this auto search
     private void TxtSearch_KeyDown(object sender, KeyEventArgs e)
@@ -292,7 +306,7 @@ namespace RimDef
       lwDefs.Columns.Add("Label", 150);
 
       string searchText = txtSearch.Text;
-      Console.WriteLine(searchText);
+      //Console.WriteLine(searchText);
 
       var model = new SearchResponse();
       var s = new System.Diagnostics.Stopwatch();
@@ -305,6 +319,8 @@ namespace RimDef
 
       foreach (SearchResult result in model.Results)
       {
+        if (result.Definition == null)
+          continue;
         Def def = result.Definition;
         string[] items = { def.mod.name, def.defType, def.defName, def.label };
         var listViewItem = new ListViewItem(items);

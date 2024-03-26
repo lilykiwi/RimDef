@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,7 +12,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <LangVersion>8</LangVersion>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-    <!--<UseWPF>true</UseWPF>-->
+    <!-- <UseWPF>true</UseWPF> -->
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -43,12 +43,13 @@
     <None Include="Resources\nopic.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Preview\rimdev_prev1.png" />
-    <Content Include="Preview\rimdev_prev2.png" />
-    <Content Include="Preview\rimdev_prev3.png" />
+    <Content Include="Preview\rimdef_preview1.png" />
+    <Content Include="Preview\rimdef_preview1.png" />
+    <Content Include="Preview\rimdef_preview1.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+    <PackageReference Include="System.Resources.Extensions"
+                      Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
