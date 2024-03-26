@@ -218,7 +218,7 @@ namespace RimDef
         // TODO: SRP me please
         // Texture
         Console.WriteLine("texture path = " + def.texture);
-        Bitmap image = new Bitmap(Properties.Resources.nopic);
+        Bitmap image = new Bitmap(100, 100);
         if (File.Exists(def.texture))
         {
           try
