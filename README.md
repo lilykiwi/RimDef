@@ -4,6 +4,6 @@ This is a fork of the [m1st4x/RimDef](https://github.com/m1st4x/RimDef) repo. Wh
 
 My intent with this fork is to generalise the tool a bit, modernise it to .NET Core, fix some outstanding bugs, and use it for mod development.
 
-![Preview 1](Preview/rimdef_preview_1.png)
-![Preview 2](Preview/rimdef_preview_2.png)
-![Preview 3](Preview/rimdef_preview_3.png)
+![Preview 1](Preview/rimdef_preview1.png)
+![Preview 2](Preview/rimdef_preview2.png)
+![Preview 3](Preview/rimdef_preview3.png)
