@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{85374E98-5171-4967-8315-5B77199166FC}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>RimDef</RootNamespace>
+    <AssemblyName>RimDef</AssemblyName>
+    <TargetFramework>net8</TargetFramework>
+    <LangVersion>12</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Runtime)' == 'linux-x64'">
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Resources.Extensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia"
+                      Version="11.0.10" />
+    <PackageReference Include="Avalonia.Desktop"
+                      Version="11.0.10" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'"
+                      Include="Avalonia.Diagnostics"
+                      Version="11.0.0-preview8" />
+    <PackageReference Include="Avalonia.Fonts.Inter"
+                      Version="11.0.10" />
+    <PackageReference Include="Avalonia.Themes.Fluent"
+                      Version="11.0.10" />
+    <PackageReference Include="CommunityToolkit.Mvvm"
+                      Version="8.2.2" />
+    <PackageReference Include="System.Resources.Extensions"
+                      Version="8.0.0" />
+  </ItemGroup>
+</Project>

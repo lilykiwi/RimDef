@@ -1,0 +1,75 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:RimDef.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:RimDef.ViewModels"
+        mc:Ignorable="d"
+        d:DesignWidth="600"
+        d:DesignHeight="450"
+        x:Class="RimDef.Views.MainWindow"
+        x:DataType="viewModels:MainWindowViewModel"
+        Title="RimDef">
+  <Design.DataContext>
+    <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+    <vm:MainWindowViewModel />
+  </Design.DataContext>
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="BG0">#ffffff</SolidColorBrush>
+          <SolidColorBrush x:Key="BG1">#f3f3f3</SolidColorBrush>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="BG0">#000000</SolidColorBrush>
+          <SolidColorBrush x:Key="BG1">#202020</SolidColorBrush>
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </Window.Resources>
+  <DockPanel Background="{DynamicResource BG1}">
+    <StackPanel DockPanel.Dock="Top"
+                Orientation="Horizontal">
+      <TextBox  Watermark="Rimworld Directory"/>
+      <ComboBox>
+        <ComboBoxItem>Version</ComboBoxItem>
+        <ComboBoxItem>1.0</ComboBoxItem>
+        <ComboBoxItem>1.1</ComboBoxItem>
+        <ComboBoxItem>1.2</ComboBoxItem>
+        <ComboBoxItem>1.3</ComboBoxItem>
+        <ComboBoxItem>1.4</ComboBoxItem>
+        <ComboBoxItem>1.5</ComboBoxItem>
+        <ComboBoxItem>All</ComboBoxItem>
+      </ComboBox>
+      <Button />
+      <Button />
+    </StackPanel>
+    <Grid ColumnDefinitions="*, 4, *"
+          Background="{DynamicResource BG1}"
+          Margin="2">
+      <Border Grid.Column="0"
+              BorderThickness="1"
+              CornerRadius="7"
+              Padding="4"
+              Background="{DynamicResource BG0}">
+        <StackPanel Background="{DynamicResource BG0}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch" />
+      </Border>
+      <GridSplitter Grid.Column="1"
+                    Background="{DynamicResource BG1}"
+                    ResizeDirection="Columns" />
+      <Border Grid.Column="2"
+              BorderThickness="1"
+              CornerRadius="7"
+              Padding="4"
+              Background="{DynamicResource BG0}">
+        <StackPanel Background="{DynamicResource BG0}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch" />
+      </Border>
+    </Grid>
+  </DockPanel>
+</Window>
