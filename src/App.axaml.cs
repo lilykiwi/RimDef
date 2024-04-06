@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-using RimDef.Views;
+using RimDef.View;
 
 namespace RimDef;
 

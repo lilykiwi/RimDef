@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:RimDef.ViewModels"
+        xmlns:loc="clr-namespace:RimDef.Helper"
         mc:Ignorable="d"
         d:DesignWidth="600"
         d:DesignHeight="450"
@@ -29,47 +30,76 @@
       </ResourceDictionary.ThemeDictionaries>
     </ResourceDictionary>
   </Window.Resources>
-  <DockPanel Background="{DynamicResource BG1}">
-    <StackPanel DockPanel.Dock="Top"
-                Orientation="Horizontal">
-      <TextBox  Watermark="Rimworld Directory"/>
-      <ComboBox>
-        <ComboBoxItem>Version</ComboBoxItem>
-        <ComboBoxItem>1.0</ComboBoxItem>
-        <ComboBoxItem>1.1</ComboBoxItem>
-        <ComboBoxItem>1.2</ComboBoxItem>
-        <ComboBoxItem>1.3</ComboBoxItem>
-        <ComboBoxItem>1.4</ComboBoxItem>
-        <ComboBoxItem>1.5</ComboBoxItem>
-        <ComboBoxItem>All</ComboBoxItem>
-      </ComboBox>
-      <Button />
-      <Button />
-    </StackPanel>
-    <Grid ColumnDefinitions="*, 4, *"
-          Background="{DynamicResource BG1}"
-          Margin="2">
-      <Border Grid.Column="0"
-              BorderThickness="1"
-              CornerRadius="7"
-              Padding="4"
-              Background="{DynamicResource BG0}">
-        <StackPanel Background="{DynamicResource BG0}"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch" />
-      </Border>
-      <GridSplitter Grid.Column="1"
-                    Background="{DynamicResource BG1}"
-                    ResizeDirection="Columns" />
-      <Border Grid.Column="2"
-              BorderThickness="1"
-              CornerRadius="7"
-              Padding="4"
-              Background="{DynamicResource BG0}">
-        <StackPanel Background="{DynamicResource BG0}"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch" />
-      </Border>
-    </Grid>
-  </DockPanel>
+  <Window.Styles>
+    <Style Selector="ListBoxItem">
+      <Setter Property="loc:DragSelectionHelper.IsDragSelecting" Value="False" />
+    </Style>
+    <Style Selector="ListBoxItem:pointerover">
+      <Setter Property="loc:DragSelectionHelper.IsDragSelecting" Value="True" />
+    </Style>
+  </Window.Styles>
+  <Panel Background="{DynamicResource BG1}">
+    <DockPanel Background="{DynamicResource BG1}"
+               Margin="5">
+      <StackPanel DockPanel.Dock="Top"
+                  Orientation="Horizontal"
+                  Margin="3 5"
+                  Spacing="5">
+        <TextBox Watermark="Rimworld Directory"
+                 VerticalAlignment="Stretch" />
+        <Button VerticalAlignment="Stretch">...</Button>
+        <ComboBox SelectedIndex="0"
+                  VerticalAlignment="Stretch">
+          <ComboBoxItem>Version</ComboBoxItem>
+          <ComboBoxItem>1.0</ComboBoxItem>
+          <ComboBoxItem>1.1</ComboBoxItem>
+          <ComboBoxItem>1.2</ComboBoxItem>
+          <ComboBoxItem>1.3</ComboBoxItem>
+          <ComboBoxItem>1.4</ComboBoxItem>
+          <ComboBoxItem>1.5</ComboBoxItem>
+          <ComboBoxItem>All</ComboBoxItem>
+        </ComboBox>
+        <Button VerticalAlignment="Stretch">Load</Button>
+      </StackPanel>
+      <Grid ColumnDefinitions="*, 4, *"
+            Background="{DynamicResource BG1}"
+            Margin="2">
+        <Border Grid.Column="0"
+                BorderThickness="1"
+                CornerRadius="7"
+                Padding="4"
+                Background="{DynamicResource BG0}">
+          <StackPanel Orientation="Vertical"
+                      Background="{DynamicResource BG0}"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal"
+                        Background="{DynamicResource BG0}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+              <ListBox x:Name="ModsList"
+                       loc:DragSelectionHelper.IsDragSelectionEnabled="true"
+                       SelectionMode="Multiple,Toggle"/>
+              <ListBox x:Name="DefTypesList"
+                       loc:DragSelectionHelper.IsDragSelectionEnabled="true"
+                       SelectionMode="Multiple,Toggle"/>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+        <GridSplitter Grid.Column="1"
+                      Background="{DynamicResource BG1}"
+                      ResizeDirection="Columns" />
+        <Border Grid.Column="2"
+                BorderThickness="1"
+                CornerRadius="7"
+                Padding="4"
+                Background="{DynamicResource BG0}">
+          <StackPanel Orientation="Vertical"
+                      Background="{DynamicResource BG0}"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch" />
+        </Border>
+      </Grid>
+    </DockPanel>
+  </Panel>
 </Window>
