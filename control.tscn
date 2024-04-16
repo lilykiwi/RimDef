@@ -1,10 +1,8 @@
-[gd_scene load_steps=17 format=3 uid="uid://d04uqbawqn6tw"]
+[gd_scene load_steps=16 format=3 uid="uid://d04uqbawqn6tw"]
 
 [ext_resource type="Theme" uid="uid://cl44asxlr0ndp" path="res://Theme/new_theme.tres" id="1_fqkay"]
-[ext_resource type="Script" path="res://Script/ConfigManager.cs" id="1_oxskx"]
 [ext_resource type="Script" path="res://Script/RimDef.cs" id="2_yh0fx"]
 [ext_resource type="Texture2D" uid="uid://by3fhj28el13l" path="res://Theme/Button/Icons/icons8-high-importance-16.png" id="3_ny84h"]
-[ext_resource type="StyleBox" uid="uid://bg3x25mqi4nqq" path="res://Theme/Button/NormalButton.tres" id="3_w6812"]
 [ext_resource type="Texture2D" uid="uid://12ni7r8me5ef" path="res://Theme/Button/Icons/icons8-earth-planet-16.png" id="4_i2702"]
 [ext_resource type="Texture2D" uid="uid://cxn2gboajd6n6" path="res://Theme/Button/Icons/icons8-checkmark-16.png" id="5_bwqwx"]
 [ext_resource type="Texture2D" uid="uid://dnyun7vmrt5ew" path="res://Theme/Button/Icons/icons8-crown-16.png" id="5_sabgi"]
@@ -15,6 +13,7 @@
 [ext_resource type="Script" path="res://DragSelectItemList.cs" id="7_arhtm"]
 [ext_resource type="Texture2D" uid="uid://dltugh5u0trvb" path="res://Theme/Button/Icons/icons8-sugar-cube-16.png" id="8_ambqm"]
 [ext_resource type="Script" path="res://TestingTree.cs" id="12_fpt8a"]
+[ext_resource type="Script" path="res://Script/Controls/Config/ConfigPage.cs" id="17_p5qug"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fvb6k"]
 bg_color = Color(0.172549, 0.172549, 0.172549, 1)
@@ -38,128 +37,16 @@ grow_horizontal = 2
 grow_vertical = 2
 drag_to_rearrange_enabled = true
 
-[node name="Config" type="MarginContainer" parent="TabContainer" node_paths=PackedStringArray("RimDirLineEdit", "CorePackLineEdit", "LocalModLineEdit", "WorkshopLineEdit", "fileDialog")]
+[node name="Config" type="MarginContainer" parent="TabContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
-script = ExtResource("1_oxskx")
-Notice = ExtResource("3_ny84h")
-Verified = ExtResource("5_bwqwx")
-RimDirLineEdit = NodePath("HBoxContainer/Defs/BasePath/LineEditRimDir")
-CorePackLineEdit = NodePath("HBoxContainer/Defs/BasePathExpansions/LineEditCorePack")
-LocalModLineEdit = NodePath("HBoxContainer/Defs/BasePathMods/LineEditLocalMods")
-WorkshopLineEdit = NodePath("HBoxContainer/Defs/SteamMods/LineEditWorkshop")
-fileDialog = NodePath("../../FileDialog")
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Config"]
-layout_mode = 2
-
-[node name="Defs" type="VBoxContainer" parent="TabContainer/Config/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 3
-
-[node name="Button" type="Button" parent="TabContainer/Config/HBoxContainer/Defs"]
-layout_mode = 2
-text = "Load Defs"
-
-[node name="BasePath" type="HBoxContainer" parent="TabContainer/Config/HBoxContainer/Defs"]
-layout_mode = 2
-
-[node name="LineEditRimDir" type="LineEdit" parent="TabContainer/Config/HBoxContainer/Defs/BasePath"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Rimworld Directory"
-right_icon = ExtResource("3_ny84h")
-select_all_on_focus = true
-
-[node name="Button" type="Button" parent="TabContainer/Config/HBoxContainer/Defs/BasePath"]
-layout_mode = 2
-theme_override_styles/normal = ExtResource("3_w6812")
-icon = ExtResource("5_tpmwp")
-
-[node name="BasePathExpansions" type="HBoxContainer" parent="TabContainer/Config/HBoxContainer/Defs"]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="CheckButton" type="CheckBox" parent="TabContainer/Config/HBoxContainer/Defs/BasePathExpansions"]
-layout_mode = 2
-button_pressed = true
-text = "Auto"
-flat = true
-
-[node name="LineEditCorePack" type="LineEdit" parent="TabContainer/Config/HBoxContainer/Defs/BasePathExpansions"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Core Packages Directory"
-editable = false
-right_icon = ExtResource("3_ny84h")
-select_all_on_focus = true
-
-[node name="Button" type="Button" parent="TabContainer/Config/HBoxContainer/Defs/BasePathExpansions"]
-layout_mode = 2
-disabled = true
-icon = ExtResource("5_tpmwp")
-
-[node name="BasePathMods" type="HBoxContainer" parent="TabContainer/Config/HBoxContainer/Defs"]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="CheckButton" type="CheckBox" parent="TabContainer/Config/HBoxContainer/Defs/BasePathMods"]
-layout_mode = 2
-button_pressed = true
-text = "Auto"
-flat = true
-
-[node name="LineEditLocalMods" type="LineEdit" parent="TabContainer/Config/HBoxContainer/Defs/BasePathMods"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Local Mods Directory"
-editable = false
-right_icon = ExtResource("3_ny84h")
-select_all_on_focus = true
-
-[node name="Button" type="Button" parent="TabContainer/Config/HBoxContainer/Defs/BasePathMods"]
-layout_mode = 2
-disabled = true
-icon = ExtResource("5_tpmwp")
-
-[node name="SteamMods" type="HBoxContainer" parent="TabContainer/Config/HBoxContainer/Defs"]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="CheckButton" type="CheckBox" parent="TabContainer/Config/HBoxContainer/Defs/SteamMods"]
-layout_mode = 2
-button_pressed = true
-text = "Auto"
-flat = true
-
-[node name="LineEditWorkshop" type="LineEdit" parent="TabContainer/Config/HBoxContainer/Defs/SteamMods"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Steam Mods Directory"
-editable = false
-right_icon = ExtResource("3_ny84h")
-select_all_on_focus = true
-
-[node name="Button" type="Button" parent="TabContainer/Config/HBoxContainer/Defs/SteamMods"]
-layout_mode = 2
-disabled = true
-icon = ExtResource("5_tpmwp")
-
-[node name="CodeEdit" type="CodeEdit" parent="TabContainer/Config/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
+script = ExtResource("17_p5qug")
+NoticeIcon = ExtResource("3_ny84h")
+VerifiedIcon = ExtResource("5_bwqwx")
+FolderIcon = ExtResource("5_tpmwp")
 
 [node name="Defs" type="MarginContainer" parent="TabContainer"]
 visible = false
@@ -359,12 +246,3 @@ ok_button_text = "Select Current Folder"
 file_mode = 2
 access = 2
 use_native_dialog = true
-
-[connection signal="pressed" from="TabContainer/Config/HBoxContainer/Defs/BasePath/Button" to="TabContainer/Config" method="_on_button_pressed" binds= ["%LineEditRimDir"]]
-[connection signal="toggled" from="TabContainer/Config/HBoxContainer/Defs/BasePathExpansions/CheckButton" to="TabContainer/Config" method="_on_check_button_toggled" binds= ["%BasePathExpansions"]]
-[connection signal="pressed" from="TabContainer/Config/HBoxContainer/Defs/BasePathExpansions/Button" to="TabContainer/Config" method="_on_button_pressed" binds= ["%LineEditCorePack"]]
-[connection signal="toggled" from="TabContainer/Config/HBoxContainer/Defs/BasePathMods/CheckButton" to="TabContainer/Config" method="_on_check_button_toggled" binds= ["%LineEditLocalMods"]]
-[connection signal="pressed" from="TabContainer/Config/HBoxContainer/Defs/BasePathMods/Button" to="TabContainer/Config" method="_on_button_pressed" binds= ["%LineEditLocalMods"]]
-[connection signal="toggled" from="TabContainer/Config/HBoxContainer/Defs/SteamMods/CheckButton" to="TabContainer/Config" method="_on_check_button_toggled" binds= ["%LineEditWorkshop"]]
-[connection signal="pressed" from="TabContainer/Config/HBoxContainer/Defs/SteamMods/Button" to="TabContainer/Config" method="_on_button_pressed" binds= ["LineEditWorkshop"]]
-[connection signal="dir_selected" from="FileDialog" to="TabContainer/Config" method="_on_file_dialog_dir_selected"]

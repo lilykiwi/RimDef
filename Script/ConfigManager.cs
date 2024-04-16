@@ -7,7 +7,7 @@ using System.Linq;
 namespace RimDefGodot
 {
 
-
+  [GlobalClass]
   public partial class ConfigManager : MarginContainer
   {
 
@@ -47,7 +47,17 @@ namespace RimDefGodot
     private FileDialog? fileDialog;
     public string fileDialogTarget = "_";
 
-    public void _on_button_pressed(string path)
+    public void _on_load_button_pressed()
+    {
+
+    }
+
+    public void _on_dir_line_edit_changed(string text, string sourcePath)
+    {
+      // called every time the user edits the line entry
+    }
+
+    public void _on_directory_picker(string path)
     {
       if (fileDialog is null)
         return;
@@ -72,13 +82,10 @@ namespace RimDefGodot
           LineEdit line = GetNodeOrNull<LineEdit>(fileDialogTarget);
           if (line != null)
           {
-            Debug.WriteLine(fileDialogTarget + " valid");
             line.Clear();
             line.InsertTextAtCaret(dir);
             line.RightIcon = null;
           }
-          else
-            Debug.WriteLine(fileDialogTarget + " not valid");
           return;
         default:
         case "_":
