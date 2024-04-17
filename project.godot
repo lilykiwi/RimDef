@@ -8,6 +8,8 @@
 
 config_version=5
 
+show_default_buttons=false
+
 [application]
 
 config/name="RimDef"
@@ -23,3 +25,7 @@ window/size/viewport_height=800
 [dotnet]
 
 project/assembly_name="RimDef"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/tool_button/plugin.cfg")

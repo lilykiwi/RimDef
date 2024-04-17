@@ -2,11 +2,9 @@ using Godot;
 
 namespace RimDefGodot
 {
-
   [GlobalClass]
   public partial class DragSelectItemList : ItemList
   {
-
     private bool IsMouseOver = false;
     private bool IsMouseDown = false;
     private int index = 0;
@@ -17,8 +15,8 @@ namespace RimDefGodot
       // connect mouse signals
       MouseEntered += _OnItemListMouseEntered;
       MouseExited += _OnItemListMouseExited;
-
     }
+
     public override void _ExitTree()
     {
       MouseEntered -= _OnItemListMouseEntered;

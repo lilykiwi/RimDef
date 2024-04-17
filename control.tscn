@@ -37,7 +37,7 @@ grow_horizontal = 2
 grow_vertical = 2
 drag_to_rearrange_enabled = true
 
-[node name="Config" type="MarginContainer" parent="TabContainer"]
+[node name="Configuration" type="MarginContainer" parent="TabContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
@@ -48,7 +48,7 @@ NoticeIcon = ExtResource("3_ny84h")
 VerifiedIcon = ExtResource("5_bwqwx")
 FolderIcon = ExtResource("5_tpmwp")
 
-[node name="Defs" type="MarginContainer" parent="TabContainer"]
+[node name="Definitions" type="MarginContainer" parent="TabContainer"]
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 4
@@ -56,43 +56,43 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="HSplitContainer" type="HBoxContainer" parent="TabContainer/Defs"]
+[node name="HSplitContainer" type="HBoxContainer" parent="TabContainer/Definitions"]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="VSplitContainer" type="VSplitContainer" parent="TabContainer/Defs/HSplitContainer"]
+[node name="VSplitContainer" type="VSplitContainer" parent="TabContainer/Definitions/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/autohide = 0
 
-[node name="Mod Scope" type="VBoxContainer" parent="TabContainer/Defs/HSplitContainer/VSplitContainer"]
+[node name="Mod Scope" type="VBoxContainer" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Label2" type="Label" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Mod Scope"]
+[node name="Label2" type="Label" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer/Mod Scope"]
 layout_mode = 2
 text = "Content Packages (Expansions & Mods)"
 horizontal_alignment = 1
 
-[node name="SearchBar" type="HBoxContainer" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Mod Scope"]
+[node name="SearchBar" type="HBoxContainer" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer/Mod Scope"]
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Mod Scope/SearchBar"]
+[node name="LineEdit" type="LineEdit" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer/Mod Scope/SearchBar"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Search Mods"
 
-[node name="Button" type="Button" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Mod Scope/SearchBar"]
+[node name="Button" type="Button" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer/Mod Scope/SearchBar"]
 layout_mode = 2
 text = "Select All"
 
-[node name="Button2" type="Button" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Mod Scope/SearchBar"]
+[node name="Button2" type="Button" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer/Mod Scope/SearchBar"]
 layout_mode = 2
 text = "Select None"
 
-[node name="ItemList" type="ItemList" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Mod Scope"]
+[node name="ItemList" type="ItemList" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer/Mod Scope"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -130,34 +130,34 @@ item_14/text = "Steam Mod 7"
 item_14/icon = ExtResource("6_7y0kf")
 script = ExtResource("7_arhtm")
 
-[node name="Def Types" type="VBoxContainer" parent="TabContainer/Defs/HSplitContainer/VSplitContainer"]
+[node name="Def Types" type="VBoxContainer" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Def Types"]
+[node name="Label" type="Label" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer/Def Types"]
 layout_mode = 2
 text = "Def Types"
 horizontal_alignment = 1
 
-[node name="SearchBar" type="HBoxContainer" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Def Types"]
+[node name="SearchBar" type="HBoxContainer" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer/Def Types"]
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Def Types/SearchBar"]
+[node name="LineEdit" type="LineEdit" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer/Def Types/SearchBar"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Search Def Types"
 
-[node name="Button" type="Button" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Def Types/SearchBar"]
+[node name="Button" type="Button" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer/Def Types/SearchBar"]
 layout_mode = 2
 text = "Select All"
 
-[node name="Button2" type="Button" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Def Types/SearchBar"]
+[node name="Button2" type="Button" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer/Def Types/SearchBar"]
 layout_mode = 2
 text = "Select None"
 
-[node name="ItemList" type="ItemList" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Def Types"]
+[node name="ItemList" type="ItemList" parent="TabContainer/Definitions/HSplitContainer/VSplitContainer/Def Types"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -182,34 +182,34 @@ item_14/text = "ColorDef"
 item_15/text = "ComplexThreatDef"
 script = ExtResource("7_arhtm")
 
-[node name="Defs" type="VBoxContainer" parent="TabContainer/Defs/HSplitContainer"]
+[node name="Defs" type="VBoxContainer" parent="TabContainer/Definitions/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="TabContainer/Defs/HSplitContainer/Defs"]
+[node name="Label" type="Label" parent="TabContainer/Definitions/HSplitContainer/Defs"]
 layout_mode = 2
 text = "Defs"
 horizontal_alignment = 1
 
-[node name="SearchBar" type="HBoxContainer" parent="TabContainer/Defs/HSplitContainer/Defs"]
+[node name="SearchBar" type="HBoxContainer" parent="TabContainer/Definitions/HSplitContainer/Defs"]
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="TabContainer/Defs/HSplitContainer/Defs/SearchBar"]
+[node name="LineEdit" type="LineEdit" parent="TabContainer/Definitions/HSplitContainer/Defs/SearchBar"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Search Defs"
 
-[node name="Button" type="Button" parent="TabContainer/Defs/HSplitContainer/Defs/SearchBar"]
+[node name="Button" type="Button" parent="TabContainer/Definitions/HSplitContainer/Defs/SearchBar"]
 layout_mode = 2
 text = "Select All"
 
-[node name="Button2" type="Button" parent="TabContainer/Defs/HSplitContainer/Defs/SearchBar"]
+[node name="Button2" type="Button" parent="TabContainer/Definitions/HSplitContainer/Defs/SearchBar"]
 layout_mode = 2
 text = "Select None"
 
-[node name="ItemList" type="ItemList" parent="TabContainer/Defs/HSplitContainer/Defs"]
+[node name="ItemList" type="ItemList" parent="TabContainer/Definitions/HSplitContainer/Defs"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -232,7 +232,7 @@ item_12/text = "Ocean"
 item_13/text = "Lake"
 script = ExtResource("7_arhtm")
 
-[node name="Tree" type="Tree" parent="TabContainer/Defs/HSplitContainer"]
+[node name="Tree" type="Tree" parent="TabContainer/Definitions/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 hide_folding = true

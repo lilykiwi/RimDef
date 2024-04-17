@@ -7,12 +7,10 @@ using static RimDefGodot.XMLReader;
 
 namespace RimDefGodot
 {
-
   [Tool]
   [GlobalClass]
   public partial class ConfigPage : MarginContainer
   {
-
     public HBoxContainer? globalContainer;
     public VBoxContainer? controlContainer;
     public CodeEdit? codeEdit;
@@ -20,36 +18,43 @@ namespace RimDefGodot
     public Button? loadButton;
     public Array<DirectoryEntry> DirectoryEntries;
 
-    public Button? Icons8Notice;
+    public RichTextLabel? Icons8Notice;
 
     [ExportCategory("Icons")]
     [Export]
     public Texture2D? NoticeIcon;
+
     [Export]
     public Texture2D? VerifiedIcon;
+
     [Export]
     public Texture2D? FolderIcon;
-
 
     public ConfigPage()
     {
       DirectoryEntries = new Array<DirectoryEntry>();
     }
 
+    public Godot.Collections.Array _get_tool_buttons()
+    {
+      return new Godot.Collections.Array { "RegeneratePanel" };
+    }
+
+    public void RegeneratePanel()
+    {
+      _Ready();
+    }
 
     public override void _Ready()
     {
-
-      //foreach (Node child in GetChildren())
-      //{
-      //  child.QueueFree();
-      //}
+      foreach (Node child in GetChildren())
+      {
+        child.QueueFree();
+      }
       DirectoryEntries.Clear();
 
       globalContainer = AddNewChild(this, new HBoxContainer());
-      controlContainer = AddNewChild(
-        globalContainer, new VBoxContainer()
-      );
+      controlContainer = AddNewChild(globalContainer, new VBoxContainer());
       controlContainer.SizeFlagsHorizontal = SizeFlags.ShrinkBegin;
 
       codeEdit = AddNewChild(globalContainer, new CodeEdit());
@@ -94,24 +99,27 @@ namespace RimDefGodot
           entry.LineEdit.TooltipText = entry.text;
       }
 
+      Container c = AddNewChild(controlContainer, new Container());
+      c.SizeFlagsVertical = SizeFlags.ExpandFill;
+
       // icons8 copyright attribution
-      Icons8Notice = AddNewChild(controlContainer, new Button());
-      Icons8Notice.MouseDefaultCursorShape = CursorShape.PointingHand;
-      Icons8Notice.Text = "Icons by Icons8";
-      Icons8Notice.Flat = true;
-      Icons8Notice.Pressed += () => _OnIcons8ButtonPressed();
+      Icons8Notice = AddNewChild(controlContainer, new RichTextLabel());
+      Icons8Notice.AppendText("Icons by [url=https://icons8.com/]Icons8[/url]");
+      Icons8Notice.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+      Icons8Notice.FitContent = true;
+      Icons8Notice.MetaClicked += (Variant meta) => _OnIcons8ButtonPressed();
     }
 
-
     /// <summary>EnableButtonIfValid</summary>
-    /// <remarks>Quick method for setting the "Load XML" button to be 
-    /// enabled if any of the directories are valid (i.e. can infer 
-    /// paths or have mods dependent on their type). This should 
+    /// <remarks>Quick method for setting the "Load XML" button to be
+    /// enabled if any of the directories are valid (i.e. can infer
+    /// paths or have mods dependent on their type). This should
     /// prevent the button from being pressed when there are no
     /// valid directories.</remarks>
     public void EnableButtonIfValid()
     {
-      if (loadButton is null) return;
+      if (loadButton is null)
+        return;
 
       bool isAnyValid = false;
       foreach (DirectoryEntry entry in DirectoryEntries)
@@ -123,13 +131,14 @@ namespace RimDefGodot
         loadButton.Disabled = true;
     }
 
-
     public void _OnTextChanged(DirectoryEntry src)
     {
-      if (src.InfoBox is null) return;
-      if (src.LineEdit is null) return;
-      if (src.hasAutoToggle is null) return;
-
+      if (src.InfoBox is null)
+        return;
+      if (src.LineEdit is null)
+        return;
+      if (src.hasAutoToggle is null)
+        return;
 
       if (IsModDirValid(src.LineEdit.Text, (bool)!src.hasAutoToggle))
       {
@@ -145,7 +154,8 @@ namespace RimDefGodot
           // we want to update the cute info box with the tooltip
           // and with the quantity of mods here
           src.InfoBox.Text = GetModCountAtDir(src.LineEdit.Text).ToString();
-          src.InfoBox.TooltipText = "Found " + src.InfoBox.Text + " mods at this directory";
+          src.InfoBox.TooltipText =
+            "Found " + src.InfoBox.Text + " mods at this directory";
         }
       }
       else
@@ -156,12 +166,11 @@ namespace RimDefGodot
         src.IsDirValid = false;
       }
 
-
       // call this to check if the main load button should be enabled
       EnableButtonIfValid();
     }
 
-
+    // csharpier-ignore
     public void _InferFromValidDir(string? dir)
     {
       if (dir is null) return;
@@ -171,39 +180,39 @@ namespace RimDefGodot
       foreach (DirectoryEntry item in DirectoryEntries)
       {
         int i = DirectoryEntries.IndexOf(item);
-        if (i == 0) continue;
-        if (item.LineEdit is not null && item.AutoToggle is not null && item.AutoToggle.ButtonPressed)
-        {
-          item.LineEdit.Text = relatives[i];
-          _OnTextChanged(item);
-        }
+
+        if ( i    == 0                    ) continue;
+        if ( item.LineEdit is null        ) continue;
+        if ( item.AutoToggle is null      ) continue;
+        if (!item.AutoToggle.ButtonPressed) continue;
+
+        item.LineEdit.Text = relatives[i];
+        _OnTextChanged(item);
+
       }
 
     }
 
-
     public void _OnCheckBoxChanged(bool val, DirectoryEntry src)
     {
-      if (src.LineEdit is null) return;
-      if (src.DirButton is null) return;
+      if (src.LineEdit is null)
+        return;
+      if (src.DirButton is null)
+        return;
 
       src.LineEdit.Editable = !val;
       src.DirButton.Disabled = val;
       _InferFromValidDir(DirectoryEntries[0].LineEdit?.Text);
     }
 
-
     public void _OnDirButtonPressed(DirectoryEntry src)
     {
       throw new NotImplementedException();
     }
 
-
     public void _OnIcons8ButtonPressed()
     {
       OS.ShellOpen("https://icons8.com/");
     }
-
   }
-
 }
