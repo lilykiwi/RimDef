@@ -1,0 +1,370 @@
+[gd_scene load_steps=17 format=3 uid="uid://d04uqbawqn6tw"]
+
+[ext_resource type="Theme" uid="uid://cl44asxlr0ndp" path="res://Theme/new_theme.tres" id="1_fqkay"]
+[ext_resource type="Script" path="res://Script/ConfigManager.cs" id="1_oxskx"]
+[ext_resource type="Script" path="res://Script/RimDef.cs" id="2_yh0fx"]
+[ext_resource type="Texture2D" uid="uid://by3fhj28el13l" path="res://Theme/Button/Icons/icons8-high-importance-16.png" id="3_ny84h"]
+[ext_resource type="StyleBox" uid="uid://bg3x25mqi4nqq" path="res://Theme/Button/NormalButton.tres" id="3_w6812"]
+[ext_resource type="Texture2D" uid="uid://12ni7r8me5ef" path="res://Theme/Button/Icons/icons8-earth-planet-16.png" id="4_i2702"]
+[ext_resource type="Texture2D" uid="uid://cxn2gboajd6n6" path="res://Theme/Button/Icons/icons8-checkmark-16.png" id="5_bwqwx"]
+[ext_resource type="Texture2D" uid="uid://dnyun7vmrt5ew" path="res://Theme/Button/Icons/icons8-crown-16.png" id="5_sabgi"]
+[ext_resource type="Texture2D" uid="uid://dpiupynqrbn23" path="res://Theme/Button/Icons/icons8-folder-16.png" id="5_tpmwp"]
+[ext_resource type="Texture2D" uid="uid://c8n66s01kn2cs" path="res://Theme/Button/Icons/icons8-steam-16.png" id="6_7y0kf"]
+[ext_resource type="Texture2D" uid="uid://cib7q283pye2g" path="res://Theme/Button/Icons/icons8-people-16.png" id="6_vl3nj"]
+[ext_resource type="Texture2D" uid="uid://dwvs2djcr6aln" path="res://Theme/Button/Icons/icons8-biotech-16.png" id="7_46cr0"]
+[ext_resource type="Script" path="res://DragSelectItemList.cs" id="7_arhtm"]
+[ext_resource type="Texture2D" uid="uid://dltugh5u0trvb" path="res://Theme/Button/Icons/icons8-sugar-cube-16.png" id="8_ambqm"]
+[ext_resource type="Script" path="res://TestingTree.cs" id="12_fpt8a"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fvb6k"]
+bg_color = Color(0.172549, 0.172549, 0.172549, 1)
+
+[node name="RimDef" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_fqkay")
+theme_override_styles/panel = SubResource("StyleBoxFlat_fvb6k")
+script = ExtResource("2_yh0fx")
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+drag_to_rearrange_enabled = true
+
+[node name="Config" type="MarginContainer" parent="TabContainer" node_paths=PackedStringArray("RimDirLineEdit", "CorePackLineEdit", "LocalModLineEdit", "WorkshopLineEdit", "fileDialog")]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+script = ExtResource("1_oxskx")
+Notice = ExtResource("3_ny84h")
+Verified = ExtResource("5_bwqwx")
+RimDirLineEdit = NodePath("HBoxContainer/Defs/BasePath/LineEditRimDir")
+CorePackLineEdit = NodePath("HBoxContainer/Defs/BasePathExpansions/LineEditCorePack")
+LocalModLineEdit = NodePath("HBoxContainer/Defs/BasePathMods/LineEditLocalMods")
+WorkshopLineEdit = NodePath("HBoxContainer/Defs/SteamMods/LineEditWorkshop")
+fileDialog = NodePath("../../FileDialog")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Config"]
+layout_mode = 2
+
+[node name="Defs" type="VBoxContainer" parent="TabContainer/Config/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="TabContainer/Config/HBoxContainer/Defs"]
+layout_mode = 2
+text = "Load Defs"
+
+[node name="BasePath" type="HBoxContainer" parent="TabContainer/Config/HBoxContainer/Defs"]
+layout_mode = 2
+
+[node name="LineEditRimDir" type="LineEdit" parent="TabContainer/Config/HBoxContainer/Defs/BasePath"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Rimworld Directory"
+right_icon = ExtResource("3_ny84h")
+select_all_on_focus = true
+
+[node name="Button" type="Button" parent="TabContainer/Config/HBoxContainer/Defs/BasePath"]
+layout_mode = 2
+theme_override_styles/normal = ExtResource("3_w6812")
+icon = ExtResource("5_tpmwp")
+
+[node name="BasePathExpansions" type="HBoxContainer" parent="TabContainer/Config/HBoxContainer/Defs"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CheckButton" type="CheckBox" parent="TabContainer/Config/HBoxContainer/Defs/BasePathExpansions"]
+layout_mode = 2
+button_pressed = true
+text = "Auto"
+flat = true
+
+[node name="LineEditCorePack" type="LineEdit" parent="TabContainer/Config/HBoxContainer/Defs/BasePathExpansions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Core Packages Directory"
+editable = false
+right_icon = ExtResource("3_ny84h")
+select_all_on_focus = true
+
+[node name="Button" type="Button" parent="TabContainer/Config/HBoxContainer/Defs/BasePathExpansions"]
+layout_mode = 2
+disabled = true
+icon = ExtResource("5_tpmwp")
+
+[node name="BasePathMods" type="HBoxContainer" parent="TabContainer/Config/HBoxContainer/Defs"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CheckButton" type="CheckBox" parent="TabContainer/Config/HBoxContainer/Defs/BasePathMods"]
+layout_mode = 2
+button_pressed = true
+text = "Auto"
+flat = true
+
+[node name="LineEditLocalMods" type="LineEdit" parent="TabContainer/Config/HBoxContainer/Defs/BasePathMods"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Local Mods Directory"
+editable = false
+right_icon = ExtResource("3_ny84h")
+select_all_on_focus = true
+
+[node name="Button" type="Button" parent="TabContainer/Config/HBoxContainer/Defs/BasePathMods"]
+layout_mode = 2
+disabled = true
+icon = ExtResource("5_tpmwp")
+
+[node name="SteamMods" type="HBoxContainer" parent="TabContainer/Config/HBoxContainer/Defs"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CheckButton" type="CheckBox" parent="TabContainer/Config/HBoxContainer/Defs/SteamMods"]
+layout_mode = 2
+button_pressed = true
+text = "Auto"
+flat = true
+
+[node name="LineEditWorkshop" type="LineEdit" parent="TabContainer/Config/HBoxContainer/Defs/SteamMods"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Steam Mods Directory"
+editable = false
+right_icon = ExtResource("3_ny84h")
+select_all_on_focus = true
+
+[node name="Button" type="Button" parent="TabContainer/Config/HBoxContainer/Defs/SteamMods"]
+layout_mode = 2
+disabled = true
+icon = ExtResource("5_tpmwp")
+
+[node name="CodeEdit" type="CodeEdit" parent="TabContainer/Config/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Defs" type="MarginContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="HSplitContainer" type="HBoxContainer" parent="TabContainer/Defs"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="VSplitContainer" type="VSplitContainer" parent="TabContainer/Defs/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/autohide = 0
+
+[node name="Mod Scope" type="VBoxContainer" parent="TabContainer/Defs/HSplitContainer/VSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label2" type="Label" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Mod Scope"]
+layout_mode = 2
+text = "Content Packages (Expansions & Mods)"
+horizontal_alignment = 1
+
+[node name="SearchBar" type="HBoxContainer" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Mod Scope"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Mod Scope/SearchBar"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search Mods"
+
+[node name="Button" type="Button" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Mod Scope/SearchBar"]
+layout_mode = 2
+text = "Select All"
+
+[node name="Button2" type="Button" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Mod Scope/SearchBar"]
+layout_mode = 2
+text = "Select None"
+
+[node name="ItemList" type="ItemList" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Mod Scope"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+select_mode = 1
+item_count = 15
+item_0/text = "Core"
+item_0/icon = ExtResource("4_i2702")
+item_1/text = "Royalty"
+item_1/icon = ExtResource("5_sabgi")
+item_2/text = "Ideology"
+item_2/icon = ExtResource("6_vl3nj")
+item_3/text = "Biotech"
+item_3/icon = ExtResource("7_46cr0")
+item_4/text = "Anomaly"
+item_4/icon = ExtResource("8_ambqm")
+item_5/text = "Local Mod 1"
+item_5/icon = ExtResource("5_tpmwp")
+item_6/text = "Local Mod 2"
+item_6/icon = ExtResource("5_tpmwp")
+item_7/text = "Local Mod 3"
+item_7/icon = ExtResource("5_tpmwp")
+item_8/text = "Steam Mod 1"
+item_8/icon = ExtResource("6_7y0kf")
+item_9/text = "Steam Mod 2"
+item_9/icon = ExtResource("6_7y0kf")
+item_10/text = "Steam Mod 3"
+item_10/icon = ExtResource("6_7y0kf")
+item_11/text = "Steam Mod 4"
+item_11/icon = ExtResource("6_7y0kf")
+item_12/text = "Steam Mod 5"
+item_12/icon = ExtResource("6_7y0kf")
+item_13/text = "Steam Mod 6"
+item_13/icon = ExtResource("6_7y0kf")
+item_14/text = "Steam Mod 7"
+item_14/icon = ExtResource("6_7y0kf")
+script = ExtResource("7_arhtm")
+
+[node name="Def Types" type="VBoxContainer" parent="TabContainer/Defs/HSplitContainer/VSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Def Types"]
+layout_mode = 2
+text = "Def Types"
+horizontal_alignment = 1
+
+[node name="SearchBar" type="HBoxContainer" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Def Types"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Def Types/SearchBar"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search Def Types"
+
+[node name="Button" type="Button" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Def Types/SearchBar"]
+layout_mode = 2
+text = "Select All"
+
+[node name="Button2" type="Button" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Def Types/SearchBar"]
+layout_mode = 2
+text = "Select None"
+
+[node name="ItemList" type="ItemList" parent="TabContainer/Defs/HSplitContainer/VSplitContainer/Def Types"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+select_mode = 1
+allow_reselect = true
+item_count = 16
+item_0/text = "AbilityDef"
+item_1/text = "ApparelLayerDef"
+item_2/text = "BackstoryDef"
+item_3/text = "BeardDef"
+item_4/text = "BillRepeatModeDef"
+item_5/text = "BillStoreModeDef"
+item_6/text = "BiomeDef"
+item_7/text = "BodyDef"
+item_8/text = "BodyPartDef"
+item_9/text = "BodyPartGroupDef"
+item_10/text = "BodyPartTagDef"
+item_11/text = "BodyTypeDef"
+item_12/text = "ChemicalDef"
+item_13/text = "ClamorDef"
+item_14/text = "ColorDef"
+item_15/text = "ComplexThreatDef"
+script = ExtResource("7_arhtm")
+
+[node name="Defs" type="VBoxContainer" parent="TabContainer/Defs/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="TabContainer/Defs/HSplitContainer/Defs"]
+layout_mode = 2
+text = "Defs"
+horizontal_alignment = 1
+
+[node name="SearchBar" type="HBoxContainer" parent="TabContainer/Defs/HSplitContainer/Defs"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="TabContainer/Defs/HSplitContainer/Defs/SearchBar"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search Defs"
+
+[node name="Button" type="Button" parent="TabContainer/Defs/HSplitContainer/Defs/SearchBar"]
+layout_mode = 2
+text = "Select All"
+
+[node name="Button2" type="Button" parent="TabContainer/Defs/HSplitContainer/Defs/SearchBar"]
+layout_mode = 2
+text = "Select None"
+
+[node name="ItemList" type="ItemList" parent="TabContainer/Defs/HSplitContainer/Defs"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+select_mode = 1
+allow_reselect = true
+item_count = 14
+item_0/text = "BorealForest"
+item_1/text = "Tundra"
+item_2/text = "ColdBog"
+item_3/text = "IceSheet"
+item_4/text = "SeaIce"
+item_5/text = "TemperateForest"
+item_6/text = "TemperateSwamp"
+item_7/text = "TropicalRainforest"
+item_8/text = "TropicalSwamp"
+item_9/text = "AridShrubland"
+item_10/text = "Desert"
+item_11/text = "ExtremeDesert"
+item_12/text = "Ocean"
+item_13/text = "Lake"
+script = ExtResource("7_arhtm")
+
+[node name="Tree" type="Tree" parent="TabContainer/Defs/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+hide_folding = true
+script = ExtResource("12_fpt8a")
+
+[node name="FileDialog" type="FileDialog" parent="."]
+title = "Open a Directory"
+initial_position = 1
+size = Vector2i(699, 734)
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+use_native_dialog = true
+
+[connection signal="pressed" from="TabContainer/Config/HBoxContainer/Defs/BasePath/Button" to="TabContainer/Config" method="_on_button_pressed" binds= ["%LineEditRimDir"]]
+[connection signal="toggled" from="TabContainer/Config/HBoxContainer/Defs/BasePathExpansions/CheckButton" to="TabContainer/Config" method="_on_check_button_toggled" binds= ["%BasePathExpansions"]]
+[connection signal="pressed" from="TabContainer/Config/HBoxContainer/Defs/BasePathExpansions/Button" to="TabContainer/Config" method="_on_button_pressed" binds= ["%LineEditCorePack"]]
+[connection signal="toggled" from="TabContainer/Config/HBoxContainer/Defs/BasePathMods/CheckButton" to="TabContainer/Config" method="_on_check_button_toggled" binds= ["%LineEditLocalMods"]]
+[connection signal="pressed" from="TabContainer/Config/HBoxContainer/Defs/BasePathMods/Button" to="TabContainer/Config" method="_on_button_pressed" binds= ["%LineEditLocalMods"]]
+[connection signal="toggled" from="TabContainer/Config/HBoxContainer/Defs/SteamMods/CheckButton" to="TabContainer/Config" method="_on_check_button_toggled" binds= ["%LineEditWorkshop"]]
+[connection signal="pressed" from="TabContainer/Config/HBoxContainer/Defs/SteamMods/Button" to="TabContainer/Config" method="_on_button_pressed" binds= ["LineEditWorkshop"]]
+[connection signal="dir_selected" from="FileDialog" to="TabContainer/Config" method="_on_file_dialog_dir_selected"]
