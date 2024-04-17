@@ -7,15 +7,20 @@ using static RimDefGodot.XMLReader;
 
 namespace RimDefGodot
 {
+
   [Tool]
   [GlobalClass]
   public partial class ConfigPage : MarginContainer
   {
+
     public HBoxContainer? globalContainer;
     public VBoxContainer? controlContainer;
     public CodeEdit? codeEdit;
 
+    public Button? loadButton;
     public Array<DirectoryEntry> DirectoryEntries;
+
+    public Button? Icons8Notice;
 
     [ExportCategory("Icons")]
     [Export]
@@ -25,20 +30,20 @@ namespace RimDefGodot
     [Export]
     public Texture2D? FolderIcon;
 
+
     public ConfigPage()
     {
       DirectoryEntries = new Array<DirectoryEntry>();
     }
 
+
     public override void _Ready()
     {
-      foreach (Node child in GetChildren())
-      {
-        child.QueueFree();
-      }
-      globalContainer = null;
-      controlContainer = null;
-      codeEdit = null;
+
+      //foreach (Node child in GetChildren())
+      //{
+      //  child.QueueFree();
+      //}
       DirectoryEntries.Clear();
 
       globalContainer = AddNewChild(this, new HBoxContainer());
@@ -50,31 +55,36 @@ namespace RimDefGodot
       codeEdit = AddNewChild(globalContainer, new CodeEdit());
       codeEdit.SizeFlagsHorizontal = SizeFlags.ExpandFill;
 
+      loadButton = AddNewChild(controlContainer, new Button());
+      loadButton.Text = "Load XML";
+      loadButton.Disabled = true;
+      //loadButton.Pressed += () => ();
+
       DirectoryEntries.Add(
         AddNewChild(
           controlContainer,
-          new DirectoryEntry(false, "Rimworld Directory", this)
+          new DirectoryEntry(this, false, "Rimworld Directory")
         )
       );
 
       DirectoryEntries.Add(
         AddNewChild(
           controlContainer,
-          new DirectoryEntry(true, "Core Packages Directory", this)
+          new DirectoryEntry(this, true, "Core Packages Directory")
         )
       );
 
       DirectoryEntries.Add(
         AddNewChild(
           controlContainer,
-          new DirectoryEntry(true, "Local Mods Directory", this)
+          new DirectoryEntry(this, true, "Local Mods Directory")
         )
       );
 
       DirectoryEntries.Add(
         AddNewChild(
           controlContainer,
-          new DirectoryEntry(true, "Steam Mods Directory", this)
+          new DirectoryEntry(this, true, "Steam Mods Directory")
         )
       );
 
@@ -83,40 +93,80 @@ namespace RimDefGodot
         if (entry.LineEdit is not null)
           entry.LineEdit.TooltipText = entry.text;
       }
+
+      // icons8 copyright attribution
+      Icons8Notice = AddNewChild(controlContainer, new Button());
+      Icons8Notice.MouseDefaultCursorShape = CursorShape.PointingHand;
+      Icons8Notice.Text = "Icons by Icons8";
+      Icons8Notice.Flat = true;
+      Icons8Notice.Pressed += () => _OnIcons8ButtonPressed();
     }
+
+
+    /// <summary>EnableButtonIfValid</summary>
+    /// <remarks>Quick method for setting the "Load XML" button to be 
+    /// enabled if any of the directories are valid (i.e. can infer 
+    /// paths or have mods dependent on their type). This should 
+    /// prevent the button from being pressed when there are no
+    /// valid directories.</remarks>
+    public void EnableButtonIfValid()
+    {
+      if (loadButton is null) return;
+
+      bool isAnyValid = false;
+      foreach (DirectoryEntry entry in DirectoryEntries)
+        isAnyValid |= entry.IsDirValid;
+
+      if (isAnyValid)
+        loadButton.Disabled = false;
+      else
+        loadButton.Disabled = true;
+    }
+
 
     public void _OnTextChanged(DirectoryEntry src)
     {
-      if (src.InfoBox is not null && src.LineEdit is not null)
+      if (src.InfoBox is null) return;
+      if (src.LineEdit is null) return;
+      if (src.hasAutoToggle is null) return;
+
+
+      if (IsModDirValid(src.LineEdit.Text, (bool)!src.hasAutoToggle))
       {
-        if (IsDirValid(src.LineEdit.Text, !src.hasAutoToggle))
+        src.InfoBox.RightIcon = VerifiedIcon;
+        src.IsDirValid = true;
+        if ((bool)!src.hasAutoToggle)
         {
-          src.InfoBox.RightIcon = VerifiedIcon;
-          if (!src.hasAutoToggle)
-          {
-            _InferFromValidDir(src.LineEdit.Text);
-            src.InfoBox.TooltipText = "Valid source dir for inference";
-          }
-          else
-          {
-            // we want to update the cute info box with the tooltip
-            // and with the quantity of mods here
-            src.InfoBox.Text = GetModCountAtDir(src.LineEdit.Text).ToString();
-            src.InfoBox.TooltipText = "Found " + src.InfoBox.Text + " mods at this directory";
-          }
+          _InferFromValidDir(src.LineEdit.Text);
+          src.InfoBox.TooltipText = "Valid source dir for inference";
         }
         else
         {
-          src.InfoBox.RightIcon = NoticeIcon;
-          src.InfoBox.Text = "";
-          src.InfoBox.TooltipText = "Invalid directory";
+          // we want to update the cute info box with the tooltip
+          // and with the quantity of mods here
+          src.InfoBox.Text = GetModCountAtDir(src.LineEdit.Text).ToString();
+          src.InfoBox.TooltipText = "Found " + src.InfoBox.Text + " mods at this directory";
         }
       }
+      else
+      {
+        src.InfoBox.RightIcon = NoticeIcon;
+        src.InfoBox.Text = "";
+        src.InfoBox.TooltipText = "Invalid directory";
+        src.IsDirValid = false;
+      }
+
+
+      // call this to check if the main load button should be enabled
+      EnableButtonIfValid();
     }
 
-    public void _InferFromValidDir(string dir)
+
+    public void _InferFromValidDir(string? dir)
     {
-      Godot.Collections.Array<string> relatives = GetRelativePaths(dir);
+      if (dir is null) return;
+
+      Array<string> relatives = GetRelativeModPaths(dir);
 
       foreach (DirectoryEntry item in DirectoryEntries)
       {
@@ -131,20 +181,29 @@ namespace RimDefGodot
 
     }
 
+
     public void _OnCheckBoxChanged(bool val, DirectoryEntry src)
     {
-      if (src.LineEdit is not null && src.DirButton is not null)
-      {
-        src.LineEdit.Editable = !val;
-        src.DirButton.Disabled = val;
-        if (DirectoryEntries[0].LineEdit is not null)
-          _InferFromValidDir(DirectoryEntries[0].LineEdit.Text);
-      }
+      if (src.LineEdit is null) return;
+      if (src.DirButton is null) return;
+
+      src.LineEdit.Editable = !val;
+      src.DirButton.Disabled = val;
+      _InferFromValidDir(DirectoryEntries[0].LineEdit?.Text);
     }
+
 
     public void _OnDirButtonPressed(DirectoryEntry src)
     {
       throw new NotImplementedException();
     }
+
+
+    public void _OnIcons8ButtonPressed()
+    {
+      OS.ShellOpen("https://icons8.com/");
+    }
+
   }
+
 }

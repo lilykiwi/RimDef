@@ -10,9 +10,9 @@
 [ext_resource type="Texture2D" uid="uid://c8n66s01kn2cs" path="res://Theme/Button/Icons/icons8-steam-16.png" id="6_7y0kf"]
 [ext_resource type="Texture2D" uid="uid://cib7q283pye2g" path="res://Theme/Button/Icons/icons8-people-16.png" id="6_vl3nj"]
 [ext_resource type="Texture2D" uid="uid://dwvs2djcr6aln" path="res://Theme/Button/Icons/icons8-biotech-16.png" id="7_46cr0"]
-[ext_resource type="Script" path="res://DragSelectItemList.cs" id="7_arhtm"]
+[ext_resource type="Script" path="res://Script/Controls/DragSelectItemList.cs" id="7_arhtm"]
 [ext_resource type="Texture2D" uid="uid://dltugh5u0trvb" path="res://Theme/Button/Icons/icons8-sugar-cube-16.png" id="8_ambqm"]
-[ext_resource type="Script" path="res://TestingTree.cs" id="12_fpt8a"]
+[ext_resource type="Script" path="res://Script/TestingTree.cs" id="12_fpt8a"]
 [ext_resource type="Script" path="res://Script/Controls/Config/ConfigPage.cs" id="17_p5qug"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fvb6k"]
